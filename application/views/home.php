@@ -23,8 +23,9 @@
             <div class="row">
               <div class="card-body">
                   <div align="center" style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="">
-                      <h1><strong>SISTEM INFORMASI PRODUKSI </strong> <br><br>
-                  <img src="<?= base_url()?>assets/gambar/ppi.png" style="width: 40%;" /> 
+                      <h1><strong><?= $setting->nm_aplikasi  ?> </strong> <br><br>
+                  <img src="<?= base_url('assets/gambar/') . $setting->logo ?>" style="width: 40%;" /> 
+                  
                   </div>
               </div>
             </div>

@@ -18,6 +18,7 @@ class Master extends CI_Controller
 	{
 		$data = array(
 			'judul' => "Dashboard",
+			'setting' => $this->m_master->get_data("m_setting")->row(),
 		);
 		$this->load->view('header',$data );
 
@@ -25,7 +26,7 @@ class Master extends CI_Controller
 		{			
 			$this->load->view('dashboard');
 		}else{
-			$this->load->view('home');
+			$this->load->view('home',$data);
 		}
 
 		$this->load->view('footer');

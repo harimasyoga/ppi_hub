@@ -1,6 +1,6 @@
 
 .color-tabel {
-    background-image: linear-gradient(180deg,#ffbfca 10%,#fc8ca0 100%);
+    background-image: linear-gradient(180deg,#22f2c9 10%,#02bf93 100%);
     text-align: center;
     justify-content:center;
     color: #000;
@@ -40,7 +40,7 @@
     position:absolute;
     width:250px;
     /* background:#2A3F54; */
-    background-image: linear-gradient(180deg,#dc1d40 10%,#b20323 100%);
+    background-image: linear-gradient(180deg,#07665a 10%,#086a5d 100%);
     z-index:999
 }
 
