@@ -220,7 +220,8 @@ class Master extends CI_Controller
 				{
 					$btnEdit = '<button type="button" class="btn btn-warning btn-sm" onclick="tampil_edit('."'".$r->id_hub."'".','."'edit'".')"><i class="fas fa-pen"></i></button>';
 
-					$btnHapus = '<button type="button" class="btn btn-danger btn-sm" onclick="deleteData('."'".$r->id_hub."'".')"><i class="fas fa-times"></i></button>';
+					// $btnHapus = '<button type="button" class="btn btn-danger btn-sm" onclick="deleteData('."'".$r->id_hub."'".')"><i class="fas fa-times"></i></button>';
+					$btnHapus = '';
 
 				}else{
 
@@ -234,11 +235,13 @@ class Master extends CI_Controller
 				$i++;
 			}
 		} else if ($jenis == "pelanggan") {
-			$query = $this->m_master->query("SELECT prov.prov_name,kab.kab_name,kec.kec_name,kel.kel_name,les.nm_sales,pel.* FROM m_pelanggan pel
+			$query = $this->m_master->query("SELECT prov.prov_name,
+			-- kab.kab_name,kec.kec_name,kel.kel_name,
+			les.nm_sales,pel.* FROM m_pelanggan pel
 			LEFT JOIN m_provinsi prov ON pel.prov=prov.prov_id
-			LEFT JOIN m_kab kab ON pel.kab=kab.kab_id
-			LEFT JOIN m_kec kec ON pel.kec=kec.kec_id
-			LEFT JOIN m_kel kel ON pel.kel=kel.kel_id
+			-- LEFT JOIN m_kab kab ON pel.kab=kab.kab_id
+			-- LEFT JOIN m_kec kec ON pel.kec=kec.kec_id
+			-- LEFT JOIN m_kel kel ON pel.kel=kel.kel_id
 			LEFT JOIN m_sales les ON pel.id_sales=les.id_sales
 			ORDER BY pel.nm_pelanggan")->result();
 			$i = 1;
@@ -257,7 +260,8 @@ class Master extends CI_Controller
 				if (in_array($this->session->userdata('level'), ['Admin','User']))
 				{
 					$btnEdit = '<button type="button" class="btn btn-warning btn-sm" onclick="tampil_edit('."'".$r->id_pelanggan."'".','."'edit'".')"><i class="fas fa-pen"></i></button>';
-					$btnHapus = '<button type="button" class="btn btn-danger btn-sm" onclick="deleteData('."'".$r->id_pelanggan."'".')"><i class="fas fa-times"></i></button>';
+					// $btnHapus = '<button type="button" class="btn btn-danger btn-sm" onclick="deleteData('."'".$r->id_pelanggan."'".')"><i class="fas fa-times"></i></button>';
+					$btnHapus = '';
 
 				}else{
 
@@ -316,7 +320,7 @@ class Master extends CI_Controller
 
 					$btnEdit = '<button type="button" class="btn btn-warning btn-sm" onclick="tampil_edit('."'".$r->id_produk."'".','."'edit'".')"><i class="fas fa-pen"></i></button>';
 
-					$btnHapus = '<button type="button" class="btn btn-danger btn-sm" onclick="deleteData('."'".$r->id_produk."'".')"><i class="fas fa-times"></i></button>';
+					// $btnHapus = '<button type="button" class="btn btn-danger btn-sm" onclick="deleteData('."'".$r->id_produk."'".')"><i class="fas fa-times"></i></button>';
 				}else{
 					$cekPO       = '';
 					$btnEdit     = '';
@@ -341,7 +345,8 @@ class Master extends CI_Controller
 				$cekPO = $this->db->query("SELECT COUNT(c.id_sales) AS jmlSales FROM trs_po p INNER JOIN m_pelanggan c ON p.id_pelanggan=c.id_pelanggan
 				WHERE c.id_sales='$idSales' GROUP BY c.id_sales")->num_rows();
 				$btnEdit = '<button type="button" class="btn btn-warning btn-sm" onclick="tampil_edit('."'".$r->id_sales."'".','."'edit'".')"><i class="fas fa-pen"></i></button>';
-				$btnHapus = '<button type="button" class="btn btn-danger btn-sm" onclick="deleteData('."'".$r->id_sales."'".')"><i class="fas fa-times"></i></button>';
+				// $btnHapus = '<button type="button" class="btn btn-danger btn-sm" onclick="deleteData('."'".$r->id_sales."'".')"><i class="fas fa-times"></i></button>';
+				$btnHapus = '';
 				$row[] = ($cekPO == 0) ? $btnEdit.' '.$btnHapus : $btnEdit;
 				$data[] = $row;
 				$i++;

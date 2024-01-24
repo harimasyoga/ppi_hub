@@ -85,25 +85,25 @@
 						<div class="col-sm-10">
 							<input type="hidden" class="form-control" id="idx">
 							<input type="hidden" class="form-control" id="no_pelanggan">
-							<input type="text" class="form-control" id="nm_pelanggan" placeholder="NAMA PELANGGAN" autocomplete="off" maxlength="50">
+							<input type="text" class="form-control" id="nm_pelanggan" placeholder="NAMA PELANGGAN" autocomplete="off" maxlength="50" oninput="this.value = this.value.toUpperCase()">
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-sm-2 col-form-label">ATTN</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" id="attn" placeholder="ATAS NAMA" autocomplete="off" maxlength="50">
+							<input type="text" class="form-control" id="attn" placeholder="ATAS NAMA" autocomplete="off" maxlength="50" oninput="this.value = this.value.toUpperCase()">
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-sm-2 col-form-label">ALAMAT</label>
 						<div class="col-sm-10">
-							<textarea class="form-control" id="alamat" placeholder="ALAMAT KANTOR"></textarea>
+							<textarea class="form-control" id="alamat" placeholder="ALAMAT KANTOR" oninput="this.value = this.value.toUpperCase()"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-sm-2 col-form-label">ALAMAT KIRIM</label>
 						<div class="col-sm-10">
-							<textarea class="form-control" id="alamat_kirim" placeholder="ALAMAT KIRIM"></textarea>
+							<textarea class="form-control" id="alamat_kirim" placeholder="ALAMAT KIRIM" oninput="this.value = this.value.toUpperCase()"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -368,24 +368,24 @@
 	}
 
 	function simpan() {
-		$("#btn-simpan").prop("disabled", true);
-		idx = $("#idx").val();
-		id_pelanggan = $("#no_pelanggan").val();
-		id_sales = $("#id_sales").val();
-		nm_pelanggan = $("#nm_pelanggan").val();
-		kode_lama = $("#kode_lama").val();
-		kode_pelanggan = $("#kode_pelanggan").val();
-		attn = $("#attn").val();
-		alamat = $("textarea#alamat").val();
-		alamat_kirim = $("textarea#alamat_kirim").val();
-		provinsi = $("#provinsi").val();
-		kota_kab = $("#kota_kab").val();
-		kecamatan = $("#kecamatan").val();
-		kelurahan = $("#kelurahan").val();
-		kode_pos = $("#kode_pos").val();
-		fax = $("#fax").val();
-		top1 = $("#top").val();
-		no_telp = $("#no_telp").val();
+		// $("#btn-simpan").prop("disabled", true);
+		idx             = $("#idx").val();
+		id_pelanggan    = $("#no_pelanggan").val();
+		id_sales        = $("#id_sales").val();
+		nm_pelanggan    = $("#nm_pelanggan").val();
+		kode_lama       = $("#kode_lama").val();
+		kode_pelanggan  = $("#kode_pelanggan").val();
+		attn            = $("#attn").val();
+		alamat          = $("textarea#alamat").val();
+		alamat_kirim    = $("textarea#alamat_kirim").val();
+		provinsi        = $("#provinsi").val();
+		kota_kab        = $("#kota_kab").val();
+		kecamatan       = $("#kecamatan").val();
+		kelurahan       = $("#kelurahan").val();
+		kode_pos        = $("#kode_pos").val();
+		fax             = $("#fax").val();
+		top1            = $("#top").val();
+		no_telp         = $("#no_telp").val();
 
 		if ( nm_pelanggan == "" || id_sales == "" || kode_pelanggan == "" || attn == "" || alamat == "" || alamat_kirim == "" || kode_pos == "" || fax == "" || top1 == "" || no_telp == "") {
 			swal("HARAP LENGKAPI FORM!", "", "info")

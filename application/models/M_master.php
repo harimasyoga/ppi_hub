@@ -9,7 +9,8 @@ class M_master extends CI_Model{
         
     }
 
-    public function upload($file,$nama){
+    public function upload($file,$nama)
+	{
         // $file = 'foto';
         // unlink('../assets/images/member/'.$nama);
         $config['upload_path'] = './assets/gambar/produk/';
@@ -30,7 +31,8 @@ class M_master extends CI_Model{
         }
     }
 
-    public function upload2($file,$nama){
+    public function upload2($file,$nama)
+	{
         // $file = 'foto';
         // unlink('../assets/images/member/'.$nama);
         $config['upload_path'] = './assets/gambar/';
@@ -51,7 +53,8 @@ class M_master extends CI_Model{
         }
     }
    
-    function get_data($table){
+    function get_data($table)
+	{
         $query = "SELECT * FROM $table";
         return $this->db->query($query);
     }
@@ -92,9 +95,13 @@ class M_master extends CI_Model{
     
     function m_pelanggan($table,$status)
 	{
-		$kode_lama = $_POST["kode_lama"];
+		$koneksi_hub    = $this->db->query("SELECT*FROM akses_db_hub")->result();
+		$db_ppi         = $this->load->database('db_ppi', TRUE);
+		
+		$kode_lama      = $_POST["kode_lama"];
 		$kode_pelanggan = $_POST["kode_pelanggan"];
-		$cekKode = $this->db->query("SELECT*FROM m_pelanggan WHERE kode_unik='$kode_pelanggan'")->num_rows();
+		$cekKode        = $this->db->query("SELECT*FROM m_pelanggan WHERE kode_unik='$kode_pelanggan'")->num_rows();
+		
 		if($status == 'update' && $kode_lama != $kode_pelanggan && $cekKode > 0){
 			return array(
 				'data' => false,
@@ -107,25 +114,47 @@ class M_master extends CI_Model{
 			);
 		}else{
 			$data = array(
-				'id_sales' => $_POST["id_sales"],
-				'kode_unik' => $_POST["kode_pelanggan"],
-				'nm_pelanggan' => $_POST["nm_pelanggan"],
-				'attn' => $_POST["attn"],
-				'alamat' => $_POST["alamat"],
-				'alamat_kirim' => $_POST["alamat_kirim"],
-				'prov' => ($_POST["provinsi"] == 0 || $_POST["provinsi"] == null || $_POST["provinsi"] == "") ? null : $_POST["provinsi"],
-				'kab' => ($_POST["kota_kab"] == 0 || $_POST["kota_kab"] == null || $_POST["kota_kab"] == "") ? null : $_POST["kota_kab"],
-				'kec' => ($_POST["kecamatan"] == 0 || $_POST["kecamatan"] == null || $_POST["kecamatan"] == "") ? null : $_POST["kecamatan"],
-				'kel' => ($_POST["kelurahan"] == 0 || $_POST["kelurahan"] == null || $_POST["kelurahan"] == "") ? null : $_POST["kelurahan"],
-				'kode_pos' => $_POST["kode_pos"],
-				'fax' => $_POST["fax"],
-				'top' => $_POST["top1"],
-				'no_telp' => $_POST["no_telp"],
+				'id_sales'        => $_POST["id_sales"],
+				'kode_unik'       => $_POST["kode_pelanggan"],
+				'nm_pelanggan'    => $_POST["nm_pelanggan"],
+				'attn'            => $_POST["attn"],
+				'alamat'          => $_POST["alamat"],
+				'alamat_kirim'    => $_POST["alamat_kirim"],
+				'prov'            => ($_POST["provinsi"] == 0 || $_POST["provinsi"] == null || $_POST["provinsi"] == "") ? null : $_POST["provinsi"],
+				'kab'             => ($_POST["kota_kab"] == 0 || $_POST["kota_kab"] == null || $_POST["kota_kab"] == "") ? null : $_POST["kota_kab"],
+				'kec'             => ($_POST["kecamatan"] == 0 || $_POST["kecamatan"] == null || $_POST["kecamatan"] == "") ? null : $_POST["kecamatan"],
+				'kel'             => ($_POST["kelurahan"] == 0 || $_POST["kelurahan"] == null || $_POST["kelurahan"] == "") ? null : $_POST["kelurahan"],
+				'kode_pos'        => $_POST["kode_pos"],
+				'fax'             => $_POST["fax"],
+				'top'             => $_POST["top1"],
+				'no_telp'         => $_POST["no_telp"],
 			);
 
-			if ($status == 'insert') {
-				$this->db->set("add_user", $this->username);
-				$inputData = $this->db->insert($table, $data);
+			if ($status == 'insert') 
+			{
+				// insert ke ppi
+				$db_ppi->set("add_user", $this->username);
+				$result_ppi    = $db_ppi->insert($table, $data);
+
+				if($result_ppi)
+				{
+					$cek_data_ppi = $db_ppi->query("SELECT*FROM m_pelanggan WHERE kode_unik='$kode_pelanggan'")->row();
+
+					// insert ke hub lainnya				
+					foreach($koneksi_hub as $koneksi)
+					{
+						$db_ppi_hub = '$'.$koneksi->nm_db_hub;
+						$db_ppi_hub = $this->load->database($koneksi->nm_db_hub, TRUE);
+						
+						$db_ppi_hub->set("id_pelanggan", $cek_data_ppi->id_pelanggan);
+						$db_ppi_hub->set("add_user", $this->username);
+						$inputData = $db_ppi_hub->insert($table, $data);
+					}
+
+				}else{
+					$inputData = false;
+				}
+				
 			}else{
 				$this->db->set("edit_user", $this->username);
 				$this->db->set("edit_time", date('Y-m-d H:i:s'));
@@ -185,7 +214,8 @@ class M_master extends CI_Model{
 		}
     }
 
-    function tb_user($table,$status){
+    function tb_user($table,$status)
+	{
         
         
         $id = $this->input->post('username');
@@ -274,7 +304,8 @@ class M_master extends CI_Model{
         return $result;
     }
     
-    function m_produk($table,$status){
+    function m_produk($table,$status)
+	{
         $data = array(
 			'kode_mc'  => $this->input->post('kode_mc'),
 			'nm_produk'  => $this->input->post('nm_produk'),
@@ -349,17 +380,18 @@ class M_master extends CI_Model{
         return $result;
     }
 
-	function buatKodeMC(){
-		$mcNoCust = $_POST["mcNoCust"];
-		$mcKodeUnik = $_POST["mcKodeUnik"];
-		$mcKategori = $_POST["mcKategori"];
-		$mcPanjang = $_POST["mcPanjang"];
-		$mcLebar = $_POST["mcLebar"];
-		$mcTinggi = $_POST["mcTinggi"];
-		$mcFlute = $_POST["mcFlute"];
-		$mcTipeBox = $_POST["mcTipeBox"];
-		$mcSambungan = $_POST["mcSambungan"];
-		$mcKualitas = $_POST["mcKualitas"];
+	function buatKodeMC()
+	{
+		$mcNoCust       = $_POST["mcNoCust"];
+		$mcKodeUnik     = $_POST["mcKodeUnik"];
+		$mcKategori     = $_POST["mcKategori"];
+		$mcPanjang      = $_POST["mcPanjang"];
+		$mcLebar        = $_POST["mcLebar"];
+		$mcTinggi       = $_POST["mcTinggi"];
+		$mcFlute        = $_POST["mcFlute"];
+		$mcTipeBox      = $_POST["mcTipeBox"];
+		$mcSambungan    = $_POST["mcSambungan"];
+		$mcKualitas     = $_POST["mcKualitas"];
 
 		if($mcKategori == 'K_BOX'){
 			$opsiWhere = "AND p.tipe_box='$mcTipeBox' AND p.sambungan='$mcSambungan'";
@@ -376,10 +408,9 @@ class M_master extends CI_Model{
 		);
 	}
 
-    function m_setting($table,$status){
-        
-       
-
+    function m_setting($table,$status)
+	{
+		
         $data = array(
             'nm_aplikasi'  => $this->input->post('nm_aplikasi'),
             'singkatan'  => $this->input->post('singkatan'),
@@ -400,7 +431,8 @@ class M_master extends CI_Model{
         return $result;
     }
 
-    function update_status($status,$id,$table,$field){
+    function update_status($status,$id,$table,$field)
+	{
         if ($status == '1') {
             $ubah = '0';
         }else{
@@ -412,26 +444,64 @@ class M_master extends CI_Model{
         return $this->db->update($table);
 
     }
-
   
-	function m_sales($jenis, $status){
+	function m_sales($jenis, $status)
+	{
+		$koneksi_hub    = $this->db->query("SELECT*FROM akses_db_hub")->result();
+		
+		$nm_sales   = $_POST["nm_sales"];
+		$no_sales   = $_POST["no_hp"];
+		$db_ppi     = $this->load->database('db_ppi', TRUE);
+
 		$data = array(
 			'nm_sales' => $_POST["nm_sales"],
 			'no_sales' => $_POST["no_hp"],
 		);
 
-		if($status == "insert"){
-			$result = $this->db->insert($jenis, $data);
+
+		if($status == "insert")
+		{
+			// insert ke ppi
+			$result_ppi    = $db_ppi->insert($jenis, $data);
+			if($result_ppi)
+			{
+				$cek_data_ppi = $db_ppi->query("SELECT*FROM m_sales where nm_sales = '$nm_sales' and no_sales = '$no_sales' ")->row();
+
+				// insert ke hub lainnya				
+				foreach($koneksi_hub as $koneksi)
+				{
+					$db_ppi_hub = '$'.$koneksi->nm_db_hub;
+					$db_ppi_hub = $this->load->database($koneksi->nm_db_hub, TRUE);
+					
+					$db_ppi_hub->set("id_sales", $cek_data_ppi->id_sales);
+					$result = $db_ppi_hub->insert($jenis, $data);
+				}
+			}else{
+				$result = false;
+			}
+
 		}else{
-			$this->db->where("id_sales", $_POST["id_sales"]);
-			$result = $this->db->update($jenis, $data);
+			// udpate ke ppi
+			$db_ppi->where("id_sales", $_POST["id_sales"]);
+			$result_ppi = $db_ppi->update($jenis, $data);
+
+			// udpate ke hub
+			if($result_ppi)
+			{
+				$this->db->where("id_sales", $_POST["id_sales"]);
+				$result = $this->db->update($jenis, $data);
+			}else{
+				$result = false;
+			}
+			
 		}
 
 		return $result;
 	}
   
 
-    function  get_romawi($bln){
+    function  get_romawi($bln)
+	{
 		switch  ($bln){
 			case  1:
 			return  "I";
