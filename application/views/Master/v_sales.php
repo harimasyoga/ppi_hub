@@ -119,19 +119,32 @@
 			data: ({
 				id_sales, nm_sales, no_hp, jenis: "m_sales", status
 			}),
+			beforeSend: function() {
+				swal({
+					title: 'loading ...',
+					allowEscapeKey    : false,
+					allowOutsideClick : false,
+					onOpen: () => {
+						swal.showLoading();
+					}
+				})
+			},
 			success: function(json){
 				data = JSON.parse(json)
 				if(data){
 					toastr.success('Berhasil Disimpan');
 					kosong();
 					$("#modalForm").modal("hide");
+					swal.close();
 				}else{
 					toastr.error('Gagal Simpan!');
+					swal.close();
 				}
 				reloadTable()
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				toastr.error('Terjadi Kesalahan')
+				swal.close();
 			}
 		})
 	}

@@ -1889,6 +1889,7 @@ class Logistik extends CI_Controller
 	{
 		$data = array(
 			'judul' => "Surat Jalan",
+			'setting' => $this->m_master->get_data("m_setting")->row(),
 		);
 		$this->load->view('header', $data);
 
@@ -1897,14 +1898,14 @@ class Logistik extends CI_Controller
 			if(in_array($this->session->userdata('level'), ['Admin','Gudang'])){
 				$this->load->view('Logistik/v_sj_add');
 			}else{
-				$this->load->view('home');
+				$this->load->view('home', $data);
 			}
 		}else{
 			if(in_array($this->session->userdata('level'), ['Admin', 'Gudang'])){
 				// $this->load->view('Logistik/v_sj');
 				$this->load->view('Logistik/v_sj_add');
 			}else{
-				$this->load->view('home');
+				$this->load->view('home', $data);
 			}
 		}
 
