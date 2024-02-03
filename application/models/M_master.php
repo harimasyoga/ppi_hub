@@ -341,7 +341,9 @@ class M_master extends CI_Model{
 			'no_pisau' => $this->input->post('no_pisau'),
 			'no_karet' => $this->input->post('no_karet'),
 			'toleransi_kirim' => $this->input->post('toleransi_kirim'),
-			'spesial_req' => $this->input->post('spesial_req')
+			'spesial_req' => $this->input->post('spesial_req'),
+			'add_time' => date('Y-m-d H:i:s'),
+			'add_user' => $this->username,
 		);
 
 		// CEK PRODUK JIKA ADA UKURAN FLUTE SUBSTANCE YANG SAMA
@@ -357,26 +359,81 @@ class M_master extends CI_Model{
 		$kualitas = $this->input->post('kualitas');
 		$tipe_box = $this->input->post('tipe_box');
 		$sambungan = $this->input->post('sambungan');
-		$cekProduk = $this->db->query("SELECT*FROM m_produk WHERE no_customer='$noCust' AND nm_produk='$nm_produk' AND l_panjang='$l_panjang' AND l_lebar='$l_lebar' AND l_tinggi='$l_tinggi' AND ukuran_sheet_p='$ukSheetP' AND ukuran_sheet_l='$ukSheetL' AND tipe_box='$tipe_box' AND sambungan='$sambungan' AND flute='$flute' AND kualitas='$kualitas'");
-		
+
+		$koneksi_hub = $this->db->query("SELECT*FROM akses_db_hub")->result();
+		$db_ppi = $this->load->database('db_ppi', TRUE);
+		$cekProduk = $db_ppi->query("SELECT*FROM m_produk WHERE no_customer='$noCust' AND nm_produk='$nm_produk' AND l_panjang='$l_panjang' AND l_lebar='$l_lebar' AND l_tinggi='$l_tinggi' AND ukuran_sheet_p='$ukSheetP' AND ukuran_sheet_l='$ukSheetL' AND tipe_box='$tipe_box' AND sambungan='$sambungan' AND flute='$flute' AND kualitas='$kualitas'");
+
+		$data2 = '';
 		if ($status == 'insert') {
 			if($cekProduk->num_rows() > 0){
-				$result= array('result' => false);
+				$result = [
+					'result_ppi' => false,
+					'result' => false,
+					'data' => false,
+				];
 			}else{
-				$this->db->set("add_user", $this->username);
-				$result= array('result' => $this->db->insert($table,$data));
+				// INSERT KE PPI
+				$result_ppi = $db_ppi->insert($table, $data);
+				if($result_ppi){
+					$cek_data_ppi = $db_ppi->query("SELECT*FROM m_produk WHERE no_customer='$noCust' AND nm_produk='$nm_produk' AND l_panjang='$l_panjang' AND l_lebar='$l_lebar' AND l_tinggi='$l_tinggi' AND ukuran_sheet_p='$ukSheetP' AND ukuran_sheet_l='$ukSheetL' AND tipe_box='$tipe_box' AND sambungan='$sambungan' AND flute='$flute' AND kualitas='$kualitas'")->row();
+					// INSERT KE HUB LAINNYA
+					foreach($koneksi_hub as $koneksi){
+						$db_ppi_hub = '$'.$koneksi->nm_db_hub;
+						$db_ppi_hub = $this->load->database($koneksi->nm_db_hub, TRUE);
+						
+						$db_ppi_hub->set("id_produk", $cek_data_ppi->id_produk);
+						$data2 .= '| insert '.$koneksi->nm_db_hub.' | ';
+						$result = array(
+							'result_ppi' => $result_ppi,
+							'result' => $db_ppi_hub->insert($table, $data),
+							'data' => $data2);
+					}
+				}else{
+					$result = [
+						'result_ppi' => false,
+						'result' => false,
+						'data' => false,
+					];
+				}
 			}
 		}else{
 			if($status == 'update' && $noCust != $h_id_pelanggan && $cekProduk->num_rows() > 0){
-				$result= array('result' => false);
+				$result = [
+					'result_ppi' => false,
+					'result' => false,
+					'data' => false,
+				];
 			}else{
-				$this->db->set("edit_user", $this->username);
-				$this->db->set("edit_time", date('Y-m-d H:i:s'));
-				$this->db->where("id_produk", $this->input->post('id'));
-				$result= array('result' => $this->db->update($table, $data));
+				// UPDATE KE PPI
+				$db_ppi->set("edit_user", $this->username);
+				$db_ppi->set("edit_time", date('Y-m-d H:i:s'));
+				$db_ppi->where("id_produk", $this->input->post('id'));
+				$result_ppi = $db_ppi->update($table, $data);
+				// UPDATE KE HUB LAINNYA
+				if($result_ppi){
+					foreach($koneksi_hub as $koneksi){
+						$db_ppi_hub = '$'.$koneksi->nm_db_hub;
+						$db_ppi_hub = $this->load->database($koneksi->nm_db_hub, TRUE);
+						
+						$data2 .= ' | update'.$koneksi->nm_db_hub.' | ';
+						$db_ppi_hub->set("edit_user", $this->username);
+						$db_ppi_hub->set("edit_time", date('Y-m-d H:i:s'));
+						$db_ppi_hub->where("id_produk", $this->input->post('id'));
+						$result = array(
+							'result_ppi' => $result_ppi,
+							'result' => $db_ppi_hub->update($table, $data),
+							'data' => $data2);
+					}
+				}else{
+					$result = [
+						'result_ppi' => false,
+						'result' => false,
+						'data' => false,
+					];
+				}
 			}
 		}
-
         return $result;
     }
 
@@ -446,7 +503,7 @@ class M_master extends CI_Model{
     }
   
 	function m_sales($jenis, $status)
-	{
+	{ //
 		$koneksi_hub    = $this->db->query("SELECT*FROM akses_db_hub")->result();
 		
 		$nm_sales   = $_POST["nm_sales"];
