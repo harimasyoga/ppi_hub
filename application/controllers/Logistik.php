@@ -2446,9 +2446,11 @@ class Logistik extends CI_Controller
 						</td>
 					</tr>';
 
-					$getSJnPO = $db_ppi->query("SELECT*FROM pl_box WHERE tgl='$urut->tgl' AND no_pl_urut='$urut->no_pl_urut'
-					GROUP BY id_perusahaan,no_surat,no_po,no_pl_urut
-					ORDER BY no_surat");
+					$getSJnPO = $db_ppi->query("SELECT p.* FROM pl_box p
+					INNER JOIN trs_po po ON p.no_po=po.kode_po
+					WHERE p.tgl='$urut->tgl' AND p.no_pl_urut='$urut->no_pl_urut' $whereIDHUB
+					GROUP BY p.id_perusahaan,p.no_surat,p.no_po,p.no_pl_urut
+					ORDER BY p.no_surat");
 					$no = 0;
 					$sumAll = 0;
 					foreach($getSJnPO->result() as $sjpo){
@@ -2559,7 +2561,8 @@ class Logistik extends CI_Controller
 		GROUP BY a.no_pkb")->row();
 
         // KOP
-		if($this->session->userdata('username') == 'akb_213'){
+		if($this->session->userdata('username') != 'developer'){
+			($data_pl->nm_pelanggan == "-" || $data_pl->nm_pelanggan == "") ? $nm_pelanggan = $data_pl->attn : $nm_pelanggan = $data_pl->nm_pelanggan;
 			$html .= '<table style="font-size:11px;color:#000;border-collapse:collapse;width:100%;vertical-align:top;font-family:Arial !important">
 				<tr>
 					<td style="width:60%"></td>
@@ -2572,7 +2575,7 @@ class Logistik extends CI_Controller
 					<td style="padding-bottom:5px;text-align:center;font-size:16px;vertical-align:middle;font-weight:bold" colspan="3">SURAT JALAN</td>
 				</tr>
 				<tr>
-					<td style="border:1px solid #000;padding:3px" rowspan="5">KEPADA : '.$data_pl->nm_pelanggan.'<br>'.$data_pl->alamat_kirim.'</td>
+					<td style="border:1px solid #000;padding:3px" rowspan="5">KEPADA : '.$nm_pelanggan.'<br>'.$data_pl->alamat_kirim.'</td>
 					<td style="padding:3px 5px">Nomer Surat Jalan</td>
 					<td style="padding:3px 0">:</td>
 					<td style="padding:3px 0">'.$data_pl->no_surat.'</td>
@@ -2597,12 +2600,8 @@ class Logistik extends CI_Controller
 					<td style="padding:3px 0">:</td>
 					<td style="padding:3px 0"></td>
 				</tr>
-
 			</table>';
-		}else if($this->session->userdata('username') == 'bsm_159'){
-			$html .= 'bsm_159';
 		}else{
-			// PPI
 			// PPN
 			if($data_pl->id_hub != null && $data_pl->kop_sj == null){
 				$pt = $data_pl->nm_hub	;
@@ -2623,7 +2622,6 @@ class Logistik extends CI_Controller
 					<td style="font-size:12px !important;padding:0 0 18px">http://primapaperindonesia.com</td>
 				</tr>';
 			}
-	
 			// PPN
 			$kop = '<table style="font-size:11px;color:#000;border-collapse:collapse;vertical-align:top;width:100%;text-align:center;font-weight:bold;font-family:Arial !important">
 				<tr>
@@ -2644,7 +2642,6 @@ class Logistik extends CI_Controller
 					<td style="border-top:2px solid #000;padding:10px 0 5px;text-decoration:underline">SURAT JALAN</td>
 				</tr>
 			</table>';
-
 			// NON PPN
 			$gak_kop = '<table cellspacing="0" style="font-size:18px;color:#000;border-collapse:collapse;vertical-align:top;width:100%;text-align:center;font-weight:bold;font-family:Arial !important">
 				<tr>
@@ -2654,7 +2651,6 @@ class Logistik extends CI_Controller
 					<td style="border-top:2px solid #000;padding:10px 0 5px;text-decoration:underline">SURAT JALAN</td>
 				</tr>
 			</table>';
-
 			if($data_pl->pajak == 'non'){
 				$html .= $gak_kop;
 			}else{
@@ -2720,177 +2716,238 @@ class Logistik extends CI_Controller
 		}
 
 		// ISI
-        // $html .= '<table cellspacing="0" style="font-size:11px !important;color:#000;border-collapse:collapse;text-align:center;width:100%;font-family:Arial !important">
-		// 	<tr>
-		// 		<th style="width:5% !important;height:15px"></th>
-		// 		<th style="width:25% !important;height:15px"></th>
-		// 		<th style="width:30% !important;height:15px"></th>
-		// 		<th style="width:8% !important;height:15px"></th>
-		// 		<th style="width:13% !important;height:15px"></th>
-		// 		<th style="width:19% !important;height:15px"></th>
-		// 	</tr>
-		// 	<tr>
-		// 		<td style="border:1px solid #000;padding:5px 0">NO</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">NO. PO</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">ITEM DESCRIPTION</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">FLUTE</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">QTY</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">KETERANGAN</td>
-		// 	</tr>';
+		$html .= '<table cellspacing="0" style="font-size:11px !important;color:#000;border-collapse:collapse;text-align:center;width:100%;font-family:Arial !important">';
+			if($this->session->userdata('username') != 'developer'){
+				$html .= '<tr>
+					<th style="width:5% !important;height:15px"></th>
+					<th style="width:39% !important;height:15px"></th>
+					<th style="width:10% !important;height:15px"></th>
+					<th style="width:10% !important;height:15px"></th>
+					<th style="width:10% !important;height:15px"></th>
+					<th style="width:26% !important;height:15px"></th>
+				</tr>
+				<tr>
+					<td style="border:1px solid #000;padding:5px 0">NO</td>
+					<td style="border:1px solid #000;padding:5px;text-align:left">NAMA BARANG</td>
+					<td style="border:1px solid #000;padding:5px 0">FLUTE</td>
+					<td style="border:1px solid #000;padding:5px 0">QTY</td>
+					<td style="border:1px solid #000;padding:5px 0">SATUAN</td>
+					<td style="border:1px solid #000;padding:5px 0">KETERANGAN</td>
+				</tr>';
+			}else{
+				$html .= '<tr>
+					<th style="width:5% !important;height:15px"></th>
+					<th style="width:25% !important;height:15px"></th>
+					<th style="width:30% !important;height:15px"></th>
+					<th style="width:8% !important;height:15px"></th>
+					<th style="width:13% !important;height:15px"></th>
+					<th style="width:19% !important;height:15px"></th>
+				</tr>
+				<tr>
+					<td style="border:1px solid #000;padding:5px 0">NO</td>
+					<td style="border:1px solid #000;padding:5px 0">NO. PO</td>
+					<td style="border:1px solid #000;padding:5px 0">ITEM DESCRIPTION</td>
+					<td style="border:1px solid #000;padding:5px 0">FLUTE</td>
+					<td style="border:1px solid #000;padding:5px 0">QTY</td>
+					<td style="border:1px solid #000;padding:5px 0">KETERANGAN</td>
+				</tr>';
+			}
 
-		// 	// AMBIL DATA
-		// 	$data_detail = $db_ppi->query("SELECT r.*,p.*,i.*,SUM(r.qty_muat) AS muat FROM m_rencana_kirim r
-		// 	INNER JOIN pl_box p ON r.id_pl_box=p.id
-		// 	INNER JOIN m_produk i ON r.id_produk=i.id_produk
-		// 	WHERE p.no_pkb='$jenis'
-		// 	GROUP BY r.id_pelanggan,r.id_produk,r.rk_kode_po");
-		// 	$no = 0;
-		// 	$sumQty = 0;
-		// 	foreach ($data_detail->result() as $data ) {
-		// 		$no++;
-		// 		$expKualitas = explode("/", $data->kualitas);
-		// 		if($data->flute == 'BCF'){
-		// 			if($expKualitas[1] == 'M125' && $expKualitas[2] == 'M125' && $expKualitas[3] == 'M125'){
-		// 				$kualitas = $expKualitas[0].'/'.$expKualitas[1].'x3/'.$expKualitas[4];
-		// 			}else if($expKualitas[1] == 'K125' && $expKualitas[2] == 'K125' && $expKualitas[3] == 'K125'){
-		// 				$kualitas = $expKualitas[0].'/'.$expKualitas[1].'x3/'.$expKualitas[4];
-		// 			}else if($expKualitas[1] == 'M150' && $expKualitas[2] == 'M150' && $expKualitas[3] == 'M150'){
-		// 				$kualitas = $expKualitas[0].'/'.$expKualitas[1].'x3/'.$expKualitas[4];
-		// 			}else if($expKualitas[1] == 'K150' && $expKualitas[2] == 'K150' && $expKualitas[3] == 'K150'){
-		// 				$kualitas = $expKualitas[0].'/'.$expKualitas[1].'x3/'.$expKualitas[4];
-		// 			}else{
-		// 				$kualitas = $data->kualitas;
-		// 			}
-		// 		}else{
-		// 			$kualitas = $data->kualitas;
-		// 		}
-		// 		if($data->kategori == 'K_BOX'){
-		// 			$ukuran = $data->nm_produk.'. '.strtolower(str_replace(' ', '', $data->ukuran)).'. '.$kualitas;
-		// 			$qty_ket = 'PCS';
-		// 		}else{
-		// 			$ukuran = $data->ukuran_sheet.'. '.$kualitas;
-		// 			$qty_ket = 'LEMBAR';
-		// 		}
-		// 		($data->flute == "BCF") ? $flute = 'BC' : $flute = $data->flute;
-		// 		$html .= '<tr>
-		// 			<td style="border:1px solid #000;padding:5px 0">'.$no.'</td>
-		// 			<td style="border:1px solid #000;padding:5px 0">'.$data->rk_kode_po.'</td>
-		// 			<td style="border:1px solid #000;padding:5px 2px">'.$ukuran.'</td>
-		// 			<td style="border:1px solid #000;padding:5px 0">'.$flute.'</td>
-		// 			<td style="border:1px solid #000;padding:5px 0">'.number_format($data->muat).' '.$qty_ket.'</td>
-		// 			<td style="border:1px solid #000;padding:5px 0"></td>
-		// 		</tr>';
-		// 		$sumQty += $data->muat;
-		// 	}
+			// AMBIL DATA
+			$data_detail = $db_ppi->query("SELECT r.*,p.*,i.*,SUM(r.qty_muat) AS muat FROM m_rencana_kirim r
+			INNER JOIN pl_box p ON r.id_pl_box=p.id
+			INNER JOIN m_produk i ON r.id_produk=i.id_produk
+			WHERE p.no_pkb='$jenis'
+			GROUP BY r.id_pelanggan,r.id_produk,r.rk_kode_po");
+			$no = 0;
+			$sumQty = 0;
+			foreach ($data_detail->result() as $data ) {
+				$no++;
+				$expKualitas = explode("/", $data->kualitas);
+				if($data->flute == 'BCF'){
+					if($expKualitas[1] == 'M125' && $expKualitas[2] == 'M125' && $expKualitas[3] == 'M125'){
+						$kualitas = $expKualitas[0].'/'.$expKualitas[1].'x3/'.$expKualitas[4];
+					}else if($expKualitas[1] == 'K125' && $expKualitas[2] == 'K125' && $expKualitas[3] == 'K125'){
+						$kualitas = $expKualitas[0].'/'.$expKualitas[1].'x3/'.$expKualitas[4];
+					}else if($expKualitas[1] == 'M150' && $expKualitas[2] == 'M150' && $expKualitas[3] == 'M150'){
+						$kualitas = $expKualitas[0].'/'.$expKualitas[1].'x3/'.$expKualitas[4];
+					}else if($expKualitas[1] == 'K150' && $expKualitas[2] == 'K150' && $expKualitas[3] == 'K150'){
+						$kualitas = $expKualitas[0].'/'.$expKualitas[1].'x3/'.$expKualitas[4];
+					}else{
+						$kualitas = $data->kualitas;
+					}
+				}else{
+					$kualitas = $data->kualitas;
+				}
+				if($data->kategori == 'K_BOX'){
+					$ukuran = $data->nm_produk.'. '.strtolower(str_replace(' ', '', $data->ukuran)).'. '.$kualitas;
+					$qty_ket = 'PCS';
+				}else{
+					$ukuran = $data->ukuran_sheet.'. '.$kualitas;
+					$qty_ket = 'LEMBAR';
+				}
+				($data->flute == "BCF") ? $flute = 'BC' : $flute = $data->flute;
 
-		// 	// TAMBAH KOTAK KOSONG
-		// 	if($data_detail->num_rows() == 1) {
-		// 		$xx = 5;
-		// 	}else if($data_detail->num_rows() == 2){
-		// 		$xx = 4;
-		// 	}else if($data_detail->num_rows() == 3){
-		// 		$xx = 3;
-		// 	}else if($data_detail->num_rows() == 4){
-		// 		$xx = 2;
-		// 	}else if($data_detail->num_rows() == 5){  
-		// 		$xx = 1;
-		// 	}
+				if($this->session->userdata('username') != 'developer'){
+					$html .= '<tr>
+						<td style="border:1px solid #000;padding:5px 0">'.$no.'</td>
+						<td style="border:1px solid #000;padding:5px;text-align:left">'.$ukuran.'</td>
+						<td style="border:1px solid #000;padding:5px 0">'.$flute.'</td>
+						<td style="border:1px solid #000;padding:5px 0">'.number_format($data->muat).'</td>
+						<td style="border:1px solid #000;padding:5px 0">'.$qty_ket.'</td>
+						<td style="border:1px solid #000;padding:5px 0"></td>
+					</tr>';
+				}else{
+					$html .= '<tr>
+						<td style="border:1px solid #000;padding:5px 0">'.$no.'</td>
+						<td style="border:1px solid #000;padding:5px 0">'.$data->rk_kode_po.'</td>
+						<td style="border:1px solid #000;padding:5px 2px">'.$ukuran.'</td>
+						<td style="border:1px solid #000;padding:5px 0">'.$flute.'</td>
+						<td style="border:1px solid #000;padding:5px 0">'.number_format($data->muat).' '.$qty_ket.'</td>
+						<td style="border:1px solid #000;padding:5px 0"></td>
+					</tr>';
+				}
+				$sumQty += $data->muat;
+			}
+
+			// TAMBAH KOTAK KOSONG
+			if($data_detail->num_rows() == 1) {
+				$xx = 5;
+			}else if($data_detail->num_rows() == 2){
+				$xx = 4;
+			}else if($data_detail->num_rows() == 3){
+				$xx = 3;
+			}else if($data_detail->num_rows() == 4){
+				$xx = 2;
+			}else if($data_detail->num_rows() == 5){  
+				$xx = 1;
+			}
+			// TAMBAH KOTAK KOSONG
+			if($data_detail->num_rows() <= 5) {
+				for($i = 0; $i < $xx; $i++){
+					$html .= '<tr>
+						<td style="border:1px solid #000;padding:23px 0 0"></td>
+						<td style="border:1px solid #000;padding:23px 0 0"></td>
+						<td style="border:1px solid #000;padding:23px 0 0"></td>
+						<td style="border:1px solid #000;padding:23px 0 0"></td>
+						<td style="border:1px solid #000;padding:23px 0 0"></td>
+						<td style="border:1px solid #000;padding:23px 0 0"></td>
+					</tr>';
+				}
+			}
 			
-		// 	// TAMBAH KOTAK KOSONG
-		// 	if($data_detail->num_rows() <= 5) {
-		// 		for($i = 0; $i < $xx; $i++){
-		// 			$html .= '<tr>
-		// 				<td style="border:1px solid #000;padding:23px 0 0"></td>
-		// 				<td style="border:1px solid #000;padding:23px 0 0"></td>
-		// 				<td style="border:1px solid #000;padding:23px 0 0"></td>
-		// 				<td style="border:1px solid #000;padding:23px 0 0"></td>
-		// 				<td style="border:1px solid #000;padding:23px 0 0"></td>
-		// 				<td style="border:1px solid #000;padding:23px 0 0"></td>
-		// 			</tr>';
-		// 		}
-		// 	}
-			
-		// 	// TOTAL
-		// 	$html .= '<tr>
-		// 		<td style="border:1px solid #000;padding:5px 0" colspan="4">TOTAL</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">'.number_format($sumQty).' '.$qty_ket.'</td>
-		// 		<td style="border:1px solid #000;padding:5px 0"></td>
-		// 	</tr>';
-
-        // $html .= '</table>';
+			// TOTAL
+			if($this->session->userdata('username') != 'developer'){
+				$html .= '<tr>
+					<td style="border:1px solid #000;padding:5px 0" colspan="3">TOTAL</td>
+					<td style="border:1px solid #000;padding:5px 0">'.number_format($sumQty).'</td>
+					<td style="border:1px solid #000;padding:5px 0" colspan="2"></td>
+				</tr>';
+			}else{
+				$html .= '<tr>
+					<td style="border:1px solid #000;padding:5px 0" colspan="4">TOTAL</td>
+					<td style="border:1px solid #000;padding:5px 0">'.number_format($sumQty).' '.$qty_ket.'</td>
+					<td style="border:1px solid #000;padding:5px 0"></td>
+				</tr>';
+			}
+		$html .= '</table>';
 
         // TTD
-        // $html .= '<table cellspacing="0" style="font-size:11px;color:#000;border-collapse:collapse;text-align:center;width:100%;font-family:Arial !important">
-		// 	<tr>
-		// 		<th style="width:14% !important;height:35px"></th>
-		// 		<th style="width:14% !important;height:35px"></th>
-		// 		<th style="width:14% !important;height:35px"></th>
-		// 		<th style="width:15% !important;height:35px"></th>
-		// 		<th style="width:15% !important;height:35px"></th>
-		// 		<th style="width:14% !important;height:35px"></th>
-		// 		<th style="width:14% !important;height:35px"></th>
-		// 	</tr>
-		// 	<tr>
-		// 		<td style="border:1px solid #000;padding:5px 0">DIBUAT</td>
-		// 		<td style="border:1px solid #000;padding:5px 0" colspan="2">DIKELUARKAN OLEH</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">DI KETAHUI</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">DI SETUJUI</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">SOPIR</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">DITERIMA</td>
-		// 	</tr>
-		// 	<tr>
-		// 		<td style="border:1px solid #000;height:80px"></td>
-		// 		<td style="border:1px solid #000;height:80px"></td>
-		// 		<td style="border:1px solid #000;height:80px"></td>
-		// 		<td style="border:1px solid #000;height:80px"></td>
-		// 		<td style="border:1px solid #000;height:80px"></td>
-		// 		<td style="border:1px solid #000;height:80px"></td>
-		// 		<td style="border:1px solid #000;height:80px"></td>
-		// 	</tr>
-		// 	<tr>
-		// 		<td style="border:1px solid #000;padding:5px 0">ARGA <br>ADMIN</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">DION<br>PPIC</td>
-		// 		<td style="border:1px solid #000;padding:5px 0">BP. SUMARTO<br>SPV GUDANG</td>
-		// 		<td style="border:1px solid #000;padding:5px 0"></td>
-		// 		<td style="border:1px solid #000;padding:5px 0"></td>
-		// 		<td style="border:1px solid #000"></td>
-		// 		<td style="border:1px solid #000"></td>
-		// 	</tr>
-		// 	<tr>
-		// 		<td style="height:30px" colspan="7"></td>
-		// 	</tr>
-		// 	<tr>
-		// 		<td style="font-weight:normal;text-align:left;padding:3px 0" colspan="4">NOTE :</td>
-		// 		<td style="border:1px solid #000;padding:5px 0;font-weight:bold;font-size:12" colspan="3">PERHATIAN</td>
-		// 	</tr>
-		// 	<tr>
-		// 		<td style="font-weight:normal;text-align:left;padding:3px 0 3px 40px">WHITE</td>
-		// 		<td style="font-weight:normal;text-align:left;padding:3px 0" colspan="3" >: PEMBELI / CUSTOMER</td>
-		// 		<td style="border:1px solid #000;font-size:13px;line-height:2;font-weight:bold" colspan="3" rowspan="5">KLAIM BARANG KURANG / RUSAK<br/>TIDAK DI TERIMA SETELAH TRUK / SOPIR<br/>KELUAR LOKASI BONGKAR</td>
-		// 	</tr>
-		// 	<tr>
-		// 		<td style="font-weight:normal;text-align:left;padding:3px 0 3px 40px">PINK</td>
-		// 		<td style="font-weight:normal;text-align:left;padding:3px 0">: FINANCE</td>
-		// 	</tr>
-		// 	<tr>
-		// 		<td style="font-weight:normal;text-align:left;padding:3px 0 3px 40px">YELLOW</td>
-		// 		<td style="font-weight:normal;text-align:left;padding:3px 0">: ACC</td>
-		// 	</tr>
-		// 	<tr>
-		// 		<td style="font-weight:normal;text-align:left;padding:3px 0 3px 40px">GREEN</td>
-		// 		<td style="font-weight:normal;text-align:left;padding:3px 0">: ADMIN</td>
-		// 	</tr>
-		// 	<tr>
-		// 		<td style="font-weight:normal;text-align:left;padding:3px 0 3px 40px">BLUE</td>
-		// 		<td style="font-weight:normal;text-align:left;padding:3px 0">: EXPEDISI</td>
-		// 	</tr>';
-        // $html .= '</table>';
+        $html .= '<table cellspacing="0" style="font-size:11px;color:#000;border-collapse:collapse;text-align:center;width:100%;font-family:Arial !important">';
+			if($this->session->userdata('username') != 'developer'){
+				$html .= '<tr>
+					<th style="width:20% !important;height:15px"></th>
+					<th style="width:35% !important;height:15px"></th>
+					<th style="width:15% !important;height:15px"></th>
+					<th style="width:15% !important;height:15px"></th>
+					<th style="width:15% !important;height:15px"></th>
+				</tr>
+				<tr>
+					<td style="padding:5px">TANDA TERIMA</td>
+					<td></td>
+					<td style="border:1px solid #000;padding:5px">SOPIR</td>
+					<td style="border:1px solid #000;padding:5px">MANAGER</td>
+					<td style="border:1px solid #000;padding:5px">BAG. PACKING</td>
+				</tr>
+				<tr>
+					<td style="padding:60px 5px 5px">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</td>
+					<td></td>
+					<td style="border:1px solid #000;padding:60px 5px 5px">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</td>
+					<td style="border:1px solid #000;padding:60px 5px 5px">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</td>
+					<td style="border:1px solid #000;padding:60px 5px 5px">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</td>
+				</tr>';
+			}else{
+				$html .='<tr>
+					<th style="width:14% !important;height:35px"></th>
+					<th style="width:14% !important;height:35px"></th>
+					<th style="width:14% !important;height:35px"></th>
+					<th style="width:15% !important;height:35px"></th>
+					<th style="width:15% !important;height:35px"></th>
+					<th style="width:14% !important;height:35px"></th>
+					<th style="width:14% !important;height:35px"></th>
+				</tr>
+				<tr>
+					<td style="border:1px solid #000;padding:5px 0">DIBUAT</td>
+					<td style="border:1px solid #000;padding:5px 0" colspan="2">DIKELUARKAN OLEH</td>
+					<td style="border:1px solid #000;padding:5px 0">DI KETAHUI</td>
+					<td style="border:1px solid #000;padding:5px 0">DI SETUJUI</td>
+					<td style="border:1px solid #000;padding:5px 0">SOPIR</td>
+					<td style="border:1px solid #000;padding:5px 0">DITERIMA</td>
+				</tr>
+				<tr>
+					<td style="border:1px solid #000;height:80px"></td>
+					<td style="border:1px solid #000;height:80px"></td>
+					<td style="border:1px solid #000;height:80px"></td>
+					<td style="border:1px solid #000;height:80px"></td>
+					<td style="border:1px solid #000;height:80px"></td>
+					<td style="border:1px solid #000;height:80px"></td>
+					<td style="border:1px solid #000;height:80px"></td>
+				</tr>
+				<tr>
+					<td style="border:1px solid #000;padding:5px 0">ARGA <br>ADMIN</td>
+					<td style="border:1px solid #000;padding:5px 0">DION<br>PPIC</td>
+					<td style="border:1px solid #000;padding:5px 0">BP. SUMARTO<br>SPV GUDANG</td>
+					<td style="border:1px solid #000;padding:5px 0"></td>
+					<td style="border:1px solid #000;padding:5px 0"></td>
+					<td style="border:1px solid #000"></td>
+					<td style="border:1px solid #000"></td>
+				</tr>
+				<tr>
+					<td style="height:30px" colspan="7"></td>
+				</tr>
+				<tr>
+					<td style="font-weight:normal;text-align:left;padding:3px 0" colspan="4">NOTE :</td>
+					<td style="border:1px solid #000;padding:5px 0;font-weight:bold;font-size:12" colspan="3">PERHATIAN</td>
+				</tr>
+				<tr>
+					<td style="font-weight:normal;text-align:left;padding:3px 0 3px 40px">WHITE</td>
+					<td style="font-weight:normal;text-align:left;padding:3px 0" colspan="3" >: PEMBELI / CUSTOMER</td>
+					<td style="border:1px solid #000;font-size:13px;line-height:2;font-weight:bold" colspan="3" rowspan="5">KLAIM BARANG KURANG / RUSAK<br/>TIDAK DI TERIMA SETELAH TRUK / SOPIR<br/>KELUAR LOKASI BONGKAR</td>
+				</tr>
+				<tr>
+					<td style="font-weight:normal;text-align:left;padding:3px 0 3px 40px">PINK</td>
+					<td style="font-weight:normal;text-align:left;padding:3px 0">: FINANCE</td>
+				</tr>
+				<tr>
+					<td style="font-weight:normal;text-align:left;padding:3px 0 3px 40px">YELLOW</td>
+					<td style="font-weight:normal;text-align:left;padding:3px 0">: ACC</td>
+				</tr>
+				<tr>
+					<td style="font-weight:normal;text-align:left;padding:3px 0 3px 40px">GREEN</td>
+					<td style="font-weight:normal;text-align:left;padding:3px 0">: ADMIN</td>
+				</tr>
+				<tr>
+					<td style="font-weight:normal;text-align:left;padding:3px 0 3px 40px">BLUE</td>
+					<td style="font-weight:normal;text-align:left;padding:3px 0">: EXPEDISI</td>
+				</tr>';
+			}
+        $html .= '</table>';
 
         // CETAK
 		$judul = 'SURAT JALAN';
         if($ctk == '0') {
-			if(in_array($this->session->userdata('username'), ['akb_213', 'bsm_159'])){
-				$this->m_fungsi->newMpdf($judul, '', $html, 1, 5, 1, 5, 'P', 'A4', '');
+			if($this->session->userdata('username') != 'developer'){
+				$this->m_fungsi->newMpdf($judul, '', $html, 5, 5, 5, 5, 'P', 'A4', '');
 			}else{
 				$this->m_fungsi->newMpdf($judul, '', $html, 1, 10, 1, 10, 'P', 'A4', '');
 			}
