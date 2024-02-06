@@ -42,31 +42,27 @@
 
 									<th style="text-align: center; width:3%">No</th>
 									<th style="text-align: center; width:10%">No PO</th>
-									<th style="text-align: center; width:20%">Tgl PO</th>
+									<th style="text-align: center; width:22%">Tgl PO</th>
 									<th style="text-align: center; width:5%">Status</th>
 									<th style="text-align: center; width:10%">Kode PO</th>
 									<!-- <th style="display:none;">Kode PO</th> -->
 									<!-- <th style="text-align: center">Total Qty</th> -->
-									<th style="text-align: center; width:10%">Customer</th>
+									<th style="text-align: center; width:20%">Customer</th>
 									<th style="text-align: center; width:5%">Admin</th>
-									<th style="text-align: center; width:5%">Mkt</th>
-									<th style="text-align: center; width:7%">PPIC</th>
-									<th style="text-align: center; width:5%">Owner</th>
+									<th style="text-align: center; width:5%">ACC</th>
 									<th style="text-align: center; width:20%;">Aksi</th>
 								<?php } else { ?>
-									<th style="text-align: center; width:3%">No</th>
+									<th style="text-align: center; width:5%">No</th>
 									<th style="text-align: center; width:10%">No PO</th>
-									<th style="text-align: center; width:15%">Tgl PO</th>
+									<th style="text-align: center; width:20%">Tgl PO</th>
 									<th style="text-align: center; width:15%">Item</th>
 									<th style="text-align: center; width:5%">Status</th>
-									<th style="text-align: center; width:10%">Kode PO</th>
+									<th style="text-align: center; width:15%">Kode PO</th>
 									<!-- <th style="display:none;">Kode PO</th> -->
 									<!-- <th style="text-align: center">Total Qty</th> -->
 									<th style="text-align: center; width:10%">Customer</th>
 									<th style="text-align: center; width:5%">Admin</th>
-									<th style="text-align: center; width:5%">Mkt</th>
-									<th style="text-align: center; width:7%">PPIC</th>
-									<th style="text-align: center; width:5%">Owner</th>
+									<th style="text-align: center; width:5%">ACC</th>
 									<th style="text-align: center; width:10%;">Aksi</th>
 								<?php }  ?>
 								
@@ -100,11 +96,17 @@
 						<div class="card-body">
 							<div class="col-md-12">
 								<div class="card-body row" style="padding : 5px;font-weight:bold">
-									<div class="col-md-2">No PO</div>
+									<div class="col-md-2">ATTN</div>
 									<div class="col-md-3">
-										<input type="hidden" class="form-control" value="trs_po" name="jenis" id="jenis">
-										<input type="hidden" class="form-control" value="" name="status" id="status">
-										<input type="text" class="form-control" name="no_po" id="no_po" value="AUTO" readonly>
+										<select class="form-control select2" name="id_hub" id="id_hub" style="width: 100%;" >
+											<!-- <option value="">Pilih</option> -->
+											<?php foreach ($hub as $r) : ?>
+												<option value="<?= $r->id_hub ?>" detail="
+												<?=$r->id_hub."|".$r->nm_hub ?>">
+													<?= $r->id_hub . " | " . $r->nm_hub . " | <b>" . number_format($r->sisa_hub, 0, ",", ".") ."</b>" ?>
+												</option>
+											<?php endforeach ?>
+										</select>
 									</div>
 
 									<div class="col-md-2"></div>
@@ -123,6 +125,21 @@
 									</div>
 								</div>
 								<div class="card-body row" style="padding : 5px;font-weight:bold">
+									<div class="col-md-2">No PO</div>
+									<div class="col-md-3">
+										<input type="hidden" class="form-control" value="trs_po" name="jenis" id="jenis">
+										<input type="hidden" class="form-control" value="" name="status" id="status">
+										<input type="text" class="form-control" name="no_po" id="no_po" value="AUTO" readonly>
+									</div>	
+
+									<div class="col-md-2"></div>
+
+									<div class="col-md-2">Kota</div>
+									<div class="col-md-3">
+										<input type="text" class="form-control" name="txt_kota" id="txt_kota" value="" readonly>
+									</div>
+								</div>
+								<div class="card-body row" style="padding : 5px;font-weight:bold">
 									<div class="col-md-2">Tgl PO</div>
 									<div class="col-md-3">
 										<?php if (in_array($this->session->userdata('level'), ['Admin','User']))  { ?>
@@ -134,9 +151,9 @@
 
 									<div class="col-md-2"></div>
 
-									<div class="col-md-2">Kota</div>
+									<div class="col-md-2">No Telepon</div>
 									<div class="col-md-3">
-										<input type="text" class="form-control" name="txt_kota" id="txt_kota" value="" readonly>
+										<input type="text" class="form-control" name="txt_no_telp" id="txt_no_telp" value="" readonly>
 									</div>
 								</div>
 								<div class="card-body row" style="padding : 5px;font-weight:bold">
@@ -147,37 +164,16 @@
 
 									<div class="col-md-2"></div>
 
-									<div class="col-md-2">No Telepon</div>
-									<div class="col-md-3">
-										<input type="text" class="form-control" name="txt_no_telp" id="txt_no_telp" value="" readonly>
-									</div>
-								</div>
-								<div class="card-body row" style="padding : 5px;font-weight:bold">
-									<div class="col-md-2">Marketing</div>
-									<div class="col-md-3">
-										<input type="text" class="form-control" name="txt_marketing" id="txt_marketing" value="" readonly>
-									</div>
-
-									<div class="col-md-2"></div>
-
 									<div class="col-md-2">FAX</div>
 									<div class="col-md-3">
 										<input type="text" class="form-control" name="txt_fax" id="txt_fax" value="" readonly>
 									</div>
 								</div>
 								<div class="card-body row" style="padding : 5px;font-weight:bold">
-									<div class="col-md-2">ATTN</div>
+									<div class="col-md-2">Marketing</div>
 									<div class="col-md-3">
-										<select class="form-control select2" name="id_hub" id="id_hub" style="width: 100%;" >
-											<!-- <option value="">Pilih</option> -->
-											<?php foreach ($hub as $r) : ?>
-												<option value="<?= $r->id_hub ?>" detail="
-												<?=$r->id_hub."|".$r->nm_hub ?>">
-													<?= $r->id_hub . " | " . $r->nm_hub . " | <b>" . number_format($r->sisa_hub, 0, ",", ".") ."</b>" ?>
-												</option>
-											<?php endforeach ?>
-										</select>
-									</div>
+										<input type="text" class="form-control" name="txt_marketing" id="txt_marketing" value="" readonly>
+									</div>							
 									
 									<div class="col-md-2"></div>
 
@@ -599,7 +595,6 @@
 					option += "<option value='"+val.id_hub+"'>"+val.id_hub+ " | " +val.nm_hub+ " | " + format_angka(val.sisa_hub) + "</option>";
 					
 					});
-
 					
 					if(id_hub==0)
 					{
@@ -831,6 +826,7 @@
 			success: function(data) {
 				if (data) {
 					// toastr.success('Berhasil Disimpan');
+					up_ft();
 					swal.close();
 					swal({
 						title               : "Data",
@@ -870,6 +866,50 @@
 			}
 		});
 
+	}
+
+	function up_ft() 
+	{
+		var file_data   = $('#filefoto').prop('files')[0];
+		var form_data   = new FormData();
+		form_data.append('filefoto', file_data);
+		var v_YjKbI2m   = 'http://localhost:81/ppi_cor/c_YjKbI2m/YjKbI2m';
+		var form        = $('#myForm')[0];
+		var data        = new FormData(form);
+
+		$.ajax({
+			url            : v_YjKbI2m,
+			type           : "POST",
+			enctype        : 'multipart/form-data',
+			data           : data,
+			dataType       : "JSON",
+			contentType    : false,
+			cache          : false,
+			timeout        : 600000,
+			processData    : false,
+			success: function(data) {
+				if (data) 
+				{
+					swal.close();
+					console.log('TERSIMPAN');
+				} else {
+					swal.close();
+					console.log('GAGAL SIMPAN');
+					return;
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) 
+			{
+				// toastr.error('Terjadi Kesalahan');				
+				swal({
+					title               : "Cek Kembali",
+					html                : "Terjadi Kesalahan",
+					type                : "error",
+					confirmButtonText   : "OK"
+				});
+				return;
+			}
+		});
 	}
 
 	function kosong(c = '') 
@@ -1132,7 +1172,7 @@
 			html: "<p> Apakah Anda yakin ingin menghapus file ini ?</p><br>"
 			+"<strong>" +no+ " </strong> ",
 			type               : "question",
-			showCancelButton   : true,
+			showCancelButton   : true, 
 			confirmButtonText  : '<b>Hapus</b>',
 			cancelButtonText   : '<b>Batal</b>',
 			confirmButtonClass : 'btn btn-success',
@@ -1144,7 +1184,7 @@
 			$.ajax({
 				url: '<?= base_url(); ?>Transaksi/hapus',
 				data: ({
-					id: id,
+					id: no,
 					jenis: 'trs_po',
 					field: 'no_po'
 				}),
@@ -1161,6 +1201,7 @@
 				},
 				success: function(data) {
 					// toastr.success('Data Berhasil Di Hapus');
+					d_pi(id,no);
 					swal({
 						title               : "Data",
 						html                : "Data Berhasil Di Hapus",
@@ -1185,6 +1226,51 @@
 		});
 
 
+	}
+	
+	function d_pi(id,no) 
+	{
+		var v_YjKbI2m2   = 'http://localhost:81/ppi_cor/c_YjKbI2m/YjKbI2m2';
+			$.ajax({
+				url  : v_YjKbI2m2,
+				data : ({
+					no       : no,
+					jenis    : 'trs_po',
+					field    : 'no_po'
+				}),
+				type: "POST",
+				beforeSend: function() {
+					swal({
+					title: 'loading ...',
+					allowEscapeKey    : false,
+					allowOutsideClick : false,
+					onOpen: () => {
+						swal.showLoading();
+					}
+					})
+				},
+				success: function(data) 
+				{
+					if (data) 
+					{
+						swal.close();
+						console.log('TERHAPUS');
+					} else {
+						swal.close();
+						console.log('GAGAL HAPUS');
+						return;
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					swal({
+						title               : "Cek Kembali",
+						html                : "Terjadi Kesalahan",
+						type                : "error",
+						confirmButtonText   : "OK"
+					});
+					return;
+				}
+			});
 	}
 	
 	function nonaktif(ket,id,no,time) 
@@ -1521,7 +1607,7 @@
 
 	function setDetailProduk(kd,id) 
 	{
-		
+		var cs = $("#id_pelanggan").val();
 		// if ($("#id_produk" + e).val() == "") {
 		// 	return;
 		// }
@@ -1578,6 +1664,19 @@
 
 						var tgl_kirim = tanggal_format_indonesia(hariKedepan.toISOString().slice(0, 10));
 						
+						if(cs == '139' ){
+							var lemparan_keterangan = `<tr style=list-style:none;>
+								<td><b>Minimal stock </b>: 10.000</td>
+								<td colspan="2"><b>Monitoring Pengiriman </b>: ${monitoring_kirim} Pcs / Minggu
+								</td>
+							</tr>`;
+						}else{
+							var lemparan_keterangan = `<tr style=list-style:none;>
+								<td colspan="3"><b>Monitoring Pengiriman </b>: ${monitoring_kirim} Pcs / Minggu
+								</td>
+							</tr>`;
+						}
+
 						html_produk = `
 						<table class='table' border='0' style='font-size:12px'>
 						<tr> 
@@ -1613,10 +1712,8 @@
 								<td><b>Joint </b>: ${$join}</td>
 								<td><b>Toleransi </b>: ${val.toleransi_kirim} %</td>
 							</tr>
-							<tr style=list-style:none;>
-								<td colspan="3"><b>Monitoring Pengiriman </b>: ${monitoring_kirim} Pcs / Minggu
-								</td>
-							</tr>`;
+							${lemparan_keterangan}
+							`;
 							<?php if ($this->session->userdata('level') != "PPIC"){ ?>
 							html_produk += `
 							<tr style=list-style:none;> 
