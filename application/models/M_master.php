@@ -59,40 +59,48 @@ class M_master extends CI_Model{
         return $this->db->query($query);
     }
 
-    function get_count($table){
+    function get_count($table)
+	{
         $query = "SELECT count(*) as jumlah FROM $table";
         return $this->db->query($query);
     }
 
 
 
-    function get_data_one($table,$kolom,$id){
-        
+    function get_data_one($table,$kolom,$id)
+	{        
         $query = "SELECT * FROM $table WHERE $kolom='$id'";
         return $this->db->query($query);
     }
 
 
-    function query($query1){
-        
+    function query($query1)
+	{        
         $query = $query1;
         return $this->db->query($query);
     }
 
 
-    function get_data_max($table,$kolom){
+    function get_data_max($table,$kolom)
+	{
         $query = "SELECT IFNULL(LPAD(MAX(RIGHT($kolom,4))+1,4,0),'0001')AS nomor FROM $table";
         return $this->db->query($query)->row("nomor");
     }
+    
+	function get_data_max_ppi($table,$kolom)
+	{
+		$db_ppi   = $this->load->database('db_ppi', TRUE);
+		$query    = "SELECT IFNULL(LPAD(MAX(RIGHT($kolom,4))+1,4,0),'0001')AS nomor FROM $table";
+        return $db_ppi->query($query)->row("nomor");
+    }
 
-    function delete($tabel,$kolom,$id){
-        
+    function delete($tabel,$kolom,$id)
+	{        
         $query = "DELETE FROM $tabel WHERE $kolom = '$id' ";
         $result =  $this->db->query($query);
         return $result;
     }
-	
-    
+	    
     function m_pelanggan($table,$status)
 	{
 		$koneksi_hub    = $this->db->query("SELECT*FROM akses_db_hub")->result();
@@ -156,10 +164,29 @@ class M_master extends CI_Model{
 				}
 				
 			}else{
-				$this->db->set("edit_user", $this->username);
-				$this->db->set("edit_time", date('Y-m-d H:i:s'));
-				$this->db->where("id_pelanggan", $_POST["id_pelanggan"]);
-				$inputData = $this->db->update($table, $data);
+				
+				$db_ppi->set("edit_user", $this->username);
+				$db_ppi->set("edit_time", date('Y-m-d H:i:s'));
+				$db_ppi->where("id_pelanggan", $_POST["id_pelanggan"]);
+				$result_ppi = $db_ppi->update($table, $data);
+
+				if($result_ppi)
+				{
+					$cek_data_ppi = $db_ppi->query("SELECT*FROM m_pelanggan WHERE kode_unik='$kode_pelanggan'")->row();
+
+					// insert ke hub lainnya				
+					foreach($koneksi_hub as $koneksi)
+					{
+						$db_ppi_hub = '$'.$koneksi->nm_db_hub;
+						$db_ppi_hub = $this->load->database($koneksi->nm_db_hub, TRUE);
+						
+						$db_ppi_hub->set("edit_user", $this->username);
+						$db_ppi_hub->set("edit_time", date('Y-m-d H:i:s'));
+						$db_ppi_hub->where("id_pelanggan", $_POST["id_pelanggan"]);
+						$inputData = $db_ppi_hub->update($table, $data);
+					}
+				}
+					
 			}
 			
 			return array(
@@ -488,8 +515,18 @@ class M_master extends CI_Model{
 			// udpate ke hub
 			if($result_ppi)
 			{
-				$this->db->where("id_sales", $_POST["id_sales"]);
-				$result = $this->db->update($jenis, $data);
+				// $this->db->where("id_sales", $_POST["id_sales"]);
+				// $result = $this->db->update($jenis, $data);
+
+				// insert ke hub lainnya				
+				foreach($koneksi_hub as $koneksi)
+				{
+					$db_ppi_hub = '$'.$koneksi->nm_db_hub;
+					$db_ppi_hub = $this->load->database($koneksi->nm_db_hub, TRUE);
+					
+					$db_ppi_hub->where("id_sales", $_POST["id_sales"]);
+					$result = $db_ppi_hub->update($jenis, $data);
+				}
 			}else{
 				$result = false;
 			}
@@ -499,7 +536,6 @@ class M_master extends CI_Model{
 		return $result;
 	}
   
-
     function  get_romawi($bln)
 	{
 		switch  ($bln){
@@ -540,8 +576,7 @@ class M_master extends CI_Model{
 			return  "XII";
 			break;
 		}
-    }
-  
+    }  
 
 }
 

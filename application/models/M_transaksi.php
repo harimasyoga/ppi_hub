@@ -20,45 +20,76 @@ class M_transaksi extends CI_Model
 
 	function trs_po($table, $status)
 	{
-		$params       = (object)$this->input->post();
+		$db_ppi         = $this->load->database('db_ppi', TRUE);
+		$params         = (object)$this->input->post();
 
-		/* LOGO */
-		//$nmfile = "file_".time(); //nama file saya beri nama langsung dan diikuti fungsi time
-		$config['upload_path']   = './assets/gambar_po/'; //path folder
-		$config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
-		$config['max_size']      = '1024'; //maksimum besar file 2M
-		$config['max_width']     = 'none'; //lebar maksimum 1288 px
-		$config['max_height']    = 'none'; //tinggi maksimu 768 px
-		//$config['file_name'] = $nmfile; //nama yang terupload nantinya
-
-		$this->load->library('upload',$config);
-		$this->upload->initialize($config);
-
-		if($_FILES['filefoto']['name'])
-		{
-			if ($this->upload->do_upload('filefoto'))
-			{
-				$gbrBukti = $this->upload->data();
-				$filefoto = $gbrBukti['file_name'];
-				// $filefoto    = $_FILES['filefoto']['name'];
-				
-			}else{
-				$filefoto = 'foto.jpg';
-			}
-		} else {
-
-			if($params->tgl_po<'2023-11-01')
-			{
-				$filefoto = 'foto.jpg';
-			}else{
-				$error = array('error' => $this->upload->display_errors());
-				var_dump($error);
-				exit;
-			}
-		}
-		/*END LOGO */
 		
-		$pono         = $this->m_master->get_data_max($table, 'no_po');
+			/* LOGO */
+			//$nmfile = "file_".time(); //nama file saya beri nama langsung dan diikuti fungsi time
+			$config['upload_path']   = './assets/gambar_po/'; //path folder
+			$config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
+			$config['max_size']      = '1024'; //maksimum besar file 2M
+			$config['max_width']     = 'none'; //lebar maksimum 1288 px
+			$config['max_height']    = 'none'; //tinggi maksimu 768 px
+			//$config['file_name'] = $nmfile; //nama yang terupload nantinya
+
+			$this->load->library('upload',$config);
+			$this->upload->initialize($config);
+			if ($status == 'insert') 
+			{
+				if($_FILES['filefoto']['name'])
+				{
+					if ($this->upload->do_upload('filefoto'))
+					{
+						$gbrBukti = $this->upload->data();
+						$filefoto = $gbrBukti['file_name'];
+						// $filefoto    = $_FILES['filefoto']['name'];
+						
+					}else{
+						$filefoto = 'foto.jpg';
+					}
+				} else {
+
+					if($params->tgl_po<'2023-11-01')
+					{
+						$filefoto = 'foto.jpg';
+					}else{
+						$error = array('error' => $this->upload->display_errors());
+						var_dump($error);
+						exit;
+					}
+				}
+
+			}else{
+
+				if($_FILES['filefoto']['name'])
+				{
+					if ($this->upload->do_upload('filefoto'))
+					{
+						$gbrBukti = $this->upload->data();
+						$filefoto = $gbrBukti['file_name'];
+						// $filefoto    = $_FILES['filefoto']['name'];
+						
+					}else{
+						$filefoto = 'foto.jpg';
+					}
+				} else {
+
+					if($params->tgl_po<'2023-11-01')
+					{
+						$filefoto = 'foto.jpg';
+					}else{
+						$load_data = $db_ppi->query("SELECT*FROM $table where kode_po = '$params->kode_po' and no_po='$params->no_po' ")->row();
+
+						$filefoto = $load_data->img_po;
+					}
+				}
+
+			}
+			/*END LOGO */
+		
+		
+		$pono         = $this->m_master->get_data_max_ppi($table, 'no_po');
 		$bln          = $this->m_master->get_romawi(date('m'));
 		$tahun        = date('Y');
 		$nopo         = 'PO/'.$tahun.'/'.$bln.'/'.$pono;
@@ -67,6 +98,7 @@ class M_transaksi extends CI_Model
 
 		$total_qty    = 0;
 		foreach ($params->id_produk as $key => $value) {
+			$id_produk_ = $params->id_produk[$key];
 			// $produk = $this->m_master->get_data_one("m_produk", "kode_mc", $params->id_produk[$key])->row();
 			// if($params->cek_rm[$key]== null)
 			// {
@@ -97,15 +129,32 @@ class M_transaksi extends CI_Model
 				'price_exc'       => str_replace('.', '', $params->price_exc[$key])
 			);
 
-			if ($status == 'insert') {
-				$this->db->set("no_po", $nopo);
-				$this->db->set("add_user", $this->username);
-				$result = $this->db->insert("trs_po_detail", $data);
-			} else {
+			if ($status == 'insert') 
+			{
+				// insert PPI
+				$db_ppi->set("no_po", $nopo);
+				$db_ppi->set("add_user", $this->username);
+				$result_ppi = $db_ppi->insert("trs_po_detail", $data);
 
-				$this->db->set("edit_user", $this->username);
-				$this->db->set("edit_time", date('Y-m-d H:i:s'));
-				$result = $this->db->update(
+				if($result_ppi)
+				{
+					$cek_data_ppi = $db_ppi->query("SELECT*FROM trs_po_detail where kode_po = '$params->kode_po' and id_produk='$id_produk_'")->row();
+
+					// insert ke hub	
+					$this->db->set("id", $cek_data_ppi->id);
+					$this->db->set("no_po", $nopo);
+					$this->db->set("add_user", $this->username);
+					$result = $this->db->insert("trs_po_detail", $data);
+				}else{
+					$result = false;
+				}
+
+				
+			} else {
+				// update PPI
+				$db_ppi->set("edit_user", $this->username);
+				$db_ppi->set("edit_time", date('Y-m-d H:i:s'));
+				$result_ppi = $db_ppi->update(
 					"trs_po_detail",
 					$data,
 					array(
@@ -114,6 +163,26 @@ class M_transaksi extends CI_Model
 						'id_produk' => $params->id_produk[$key]
 					)
 				);
+
+				if($result_ppi)
+				{
+					// update ke hub	
+					$this->db->set("edit_user", $this->username);
+					$this->db->set("edit_time", date('Y-m-d H:i:s'));
+					$result = $this->db->update(
+						"trs_po_detail",
+						$data,
+						array(
+							'no_po' => $params->no_po,
+							// 'kode_mc' => $produk->kode_mc
+							'id_produk' => $params->id_produk[$key]
+						)
+					);
+				}else{
+					$result = false;
+				}
+
+				
 			}
 
 			$total_qty +=  str_replace('.', '', $params->qty[$key]);
@@ -138,17 +207,46 @@ class M_transaksi extends CI_Model
 			'img_po'         => $filefoto
 		);
 
-		if ($status == 'insert') {
+		if ($status == 'insert') 
+		{			
+			// insert PPI
+			$db_ppi->set("no_po", $nopo);
+			$db_ppi->set("add_user", $this->username);
+			$db_ppi->set("add_time", date("Y:m:d H:i:s"));
+			$result_ppi = $db_ppi->insert($table, $data);
+
+			if($result_ppi)
+			{
+				$cek_data_ppi = $db_ppi->query("SELECT*FROM $table where kode_po = '$params->kode_po' and no_po='$nopo' ")->row();
+
+				// insert ke hub	
+				$this->db->set("id", $cek_data_ppi->id);
+				$this->db->set("no_po", $nopo);
+				$this->db->set("add_user", $this->username);
+				$this->db->set("add_time", date("Y:m:d H:i:s"));
+				$result = $this->db->insert($table, $data);
+			}else{
+				$result = false;
+			}
 			
-			$this->db->set("no_po", $nopo);
-			$this->db->set("add_user", $this->username);
-			$this->db->set("add_time", date("Y:m:d H:i:s"));
-			$result = $this->db->insert($table, $data);
 		} else {
 
-			$this->db->set("edit_user", $this->username);
-			$this->db->set("edit_time", date("Y:m:d H:i:s"));
-			$result = $this->db->update($table, $data, array('no_po' => $params->no_po));
+			// update PPI
+			$db_ppi->set("edit_user", $this->username);
+			$db_ppi->set("edit_time", date("Y:m:d H:i:s"));
+			$result_ppi = $db_ppi->update($table, $data, array('no_po' => $params->no_po));
+
+			if($result_ppi)
+			{
+
+				// update ke hub					
+				$this->db->set("edit_user", $this->username);
+				$this->db->set("edit_time", date("Y:m:d H:i:s"));
+				$result = $this->db->update($table, $data, array('no_po' => $params->no_po));
+			}else{
+				$result = false;
+			}
+			
 		}
 
 		return $result;

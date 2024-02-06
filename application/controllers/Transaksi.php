@@ -16,13 +16,21 @@ class Transaksi extends CI_Controller
 
 	public function PO()
 	{
-		$tahun = date('Y');
+		$tahun          = date('Y');
+		$level          = $this->session->userdata('level');
+		$hub_session    = $this->session->userdata('nm_user');
+		if(in_array($this->session->userdata('level'), ['Admin','User']))
+		{
+			$cek_where ="";
+		}else{
+			$cek_where ="where a.nm_hub='$hub_session'";
+		}
 		$data = array(
 			'judul' => "Purchase Order",
 			'produk' => $this->db->query("SELECT * FROM m_produk order by id_produk")->result(),
 			'sales' => $this->db->query("SELECT * FROM m_sales order by id_sales")->result(),
 			'hub' => $this->db->query("SELECT a.*,4800000000-IFNULL((select sum(c.qty*price_inc)jum from trs_po b JOIN trs_po_detail c ON b.no_po=c.no_po where b.id_hub=a.id_hub and YEAR(b.tgl_po) in ('$tahun')
-			group by b.id_hub ,YEAR(b.tgl_po)),0) sisa_hub FROM m_hub a
+			group by b.id_hub ,YEAR(b.tgl_po)),0) sisa_hub FROM m_hub a $cek_where
 			order by id_hub")->result(),
 			'pelanggan' => $this->db->query("SELECT * FROM m_pelanggan a 
             left join m_kab b on a.kab=b.kab_id 
@@ -211,12 +219,21 @@ class Transaksi extends CI_Controller
 
 	function load_hub()
     {
-		$tgl_po   = $this->input->post('tgl_po');
-		$tanggal  = explode('-',$tgl_po);
-		$tahun    = $tanggal[0];
+		$tgl_po         = $this->input->post('tgl_po');
+		$tanggal        = explode('-',$tgl_po);
+		$tahun          = $tanggal[0];
+		$level          = $this->session->userdata('level');
+		$hub_session    = $this->session->userdata('nm_user');
+
+		if(in_array($this->session->userdata('level'), ['Admin','User']))
+		{
+			$cek_where ="";
+		}else{
+			$cek_where ="where a.nm_hub='$hub_session'";
+		}
 
         $query = $this->db->query("SELECT a.*,4800000000-IFNULL((select sum(c.qty*price_inc)jum from trs_po b JOIN trs_po_detail c ON b.no_po=c.no_po where b.id_hub=a.id_hub and YEAR(b.tgl_po) in ('$tahun')
-		group by b.id_hub ,YEAR(b.tgl_po)),0) sisa_hub FROM m_hub a
+		group by b.id_hub ,YEAR(b.tgl_po)),0) sisa_hub  FROM m_hub a $cek_where
 		order by id_hub")->result();
 
             if (!$query) {
@@ -271,8 +288,9 @@ class Transaksi extends CI_Controller
 
     function cek_kode()
     {
-        $kode_po    = $this->input->post('kode_po');
-        $query      = $this->db->query("SELECT count(*)jum FROM trs_po where kode_po    = '$kode_po' ")->row();
+		$db_ppi   = $this->load->database('db_ppi', TRUE);
+		$kode_po  = $this->input->post('kode_po');
+		$query    = $db_ppi->query("SELECT count(*)jum FROM trs_po where kode_po    = '$kode_po' ")->row();
 
         echo json_encode($query);
     }
@@ -375,7 +393,8 @@ class Transaksi extends CI_Controller
 		$jenis        = $this->uri->segment(3);
 		$data         = array();
 
-		if ($jenis == "po") {
+		if ($jenis == "po") 
+		{
 
 			$level   = $this->session->userdata('level');
 			$nm_user = $this->session->userdata('nm_user');
@@ -383,7 +402,7 @@ class Transaksi extends CI_Controller
 			if($level =='Hub')
 			{
 				$cek     = $this->db->query("SELECT*FROM m_hub where nm_hub='$nm_user' ")->row();
-				$cek_data = "WHERE status_app3 in ('Y') and id_hub in ('$cek->id_hub')";
+				$cek_data = "WHERE id_hub in ('$cek->id_hub')";
 			}else{
 
 				if($this->session->userdata('username')=='ppismg'){
@@ -515,17 +534,9 @@ class Transaksi extends CI_Controller
 					<button type="button" title="OKE" style="text-align: center;" class="btn btn-sm btn-success "><i class="fas fa-check-circle"></i></button><br><b>
 					'.$this->m_fungsi->tanggal_ind($time).' <br> ('.$time_po.' )</b></div>
 				';
-				$row[] = '<div class="text-center">
-					<button onclick="data_sementara(`Marketing`,' . "'" . $r->status_app1 . "'" . ',' . "'" . $time1 . "'" . ',' . "'" . $alasan1 . "'" . ',' . "'" . $r->no_po . "'" . ')" type="button" title="'.$time1.'" style="text-align: center;" class="btn btn-sm '.$btn1.' ">'.$i1.'</button><br>
-					'.$alasan1.'</div>
-				';
-				
+			
                 $row[] = '<div class="text-center">
-					<button onclick="data_sementara(`PPIC`,' . "'" . $r->status_app2 . "'" . ',' . "'" . $time2 . "'" . ',' . "'" . $alasan2 . "'" . ',' . "'" . $r->no_po . "'" . ')"  type="button" title="'.$time2.'"  style="text-align: center;" class="btn btn-sm '.$btn2.' ">'.$i2.'</button><br>
-					'.$alasan2.'</div>
-				';
-                $row[] = '<div class="text-center">
-					<button onclick="data_sementara(`Owner`,' . "'" . $r->status_app3 . "'" . ',' . "'" . $time3 . "'" . ',' . "'" . $alasan3 . "'" . ',' . "'" . $r->no_po . "'" . ')"  type="button" title="'.$time3.'"  style="text-align: center;" class="btn btn-sm '.$btn3.' ">'.$i3.'</button><br>
+					<button onclick="data_sementara(`ACC`,' . "'" . $r->status_app3 . "'" . ',' . "'" . $time3 . "'" . ',' . "'" . $alasan3 . "'" . ',' . "'" . $r->no_po . "'" . ')"  type="button" title="'.$time3.'"  style="text-align: center;" class="btn btn-sm '.$btn3.' ">'.$i3.'</button><br>
 					'.$alasan3.'</div>
 				';
 
@@ -553,7 +564,7 @@ class Transaksi extends CI_Controller
 									<i class="fa fa-edit"></i>
 								</button>
 								
-								<button type="button" title="DELETE"  onclick="deleteData(' . "'" . $r->no_po . "'" . ',' . "'" . $r->no_po . "'" . ')" class="btn btn-danger btn-sm">
+								<button type="button" title="DELETE"  onclick="deleteData(' . "'" . $r->id . "'" . ',' . "'" . $r->no_po . "'" . ')" class="btn btn-danger btn-sm">
 									<i class="fa fa-trash-alt"></i>
 								</button>  
 
@@ -583,10 +594,11 @@ class Transaksi extends CI_Controller
 
 						if($r->status_app1 == 'N' || $r->status_app1 == 'H' || $r->status_app1 == 'R')
 						{
-							$aksi .=  ' 
-									<button title="VERIFIKASI DATA" type="button" onclick="tampil_edit(' . "'" . $r->id . "'" . ',' . "'detail'" . ')" class="btn btn-info btn-sm">
-										<i class="fa fa-check"></i>
-									</button>  ';
+							$aksi .=  '';
+							// $aksi .=  ' 
+							// 		<button title="VERIFIKASI DATA" type="button" onclick="tampil_edit(' . "'" . $r->id . "'" . ',' . "'detail'" . ')" class="btn btn-info btn-sm">
+							// 			<i class="fa fa-check"></i>
+							// 		</button>  ';
 						}
 					}
 
@@ -594,20 +606,22 @@ class Transaksi extends CI_Controller
 
 						if($r->status_app2 == 'N' || $r->status_app2 == 'H' || $r->status_app2 == 'R'){
 
-							$aksi .=  ' 
-									<button title="VERIFIKASI DATA" type="button" onclick="tampil_edit(' . "'" . $r->id . "'" . ',' . "'detail'" . ')" class="btn btn-info btn-sm">
-										<i class="fa fa-check"></i>
-									</button> ';
+							// $aksi .=  ' 
+							// 		<button title="VERIFIKASI DATA" type="button" onclick="tampil_edit(' . "'" . $r->id . "'" . ',' . "'detail'" . ')" class="btn btn-info btn-sm">
+							// 			<i class="fa fa-check"></i>
+							// 		</button> ';
+							$aksi .=  '  ';
 						}
 					}
 
 					if ($this->session->userdata('level') == 'Owner' && $r->status_app1 == 'Y' && $r->status_app2 == 'Y' ) {
 						if($r->status_app3 == 'N' || $r->status_app3 == 'H' || $r->status_app3 == 'R'){
 
-							$aksi .=  ' 
-									<button title="VERIFIKASI DATA" type="button" onclick="tampil_edit(' . "'" . $r->id . "'" . ',' . "'detail'" . ')" class="btn btn-info btn-sm">
-										<i class="fa fa-check"></i>
-									</button>  ';
+							// $aksi .=  ' 
+							// 		<button title="VERIFIKASI DATA" type="button" onclick="tampil_edit(' . "'" . $r->id . "'" . ',' . "'detail'" . ')" class="btn btn-info btn-sm">
+							// 			<i class="fa fa-check"></i>
+							// 		</button>  ';
+							$aksi .=  ' ';
 						}
 					}
 
@@ -623,9 +637,7 @@ class Transaksi extends CI_Controller
 								<button type="button" title="DELETE"  onclick="deleteData(' . "'" . $r->no_po . "'" . ',' . "'" . $r->no_po . "'" . ')" class="btn btn-danger btn-sm">
 									<i class="fa fa-trash-alt"></i>
 								</button>  
-	                            <button title="VERIFIKASI DATA" type="button" onclick="tampil_edit(' . "'" . $r->id . "'" . ',' . "'detail'" . ')" class="btn btn-info btn-sm">
-                                    <i class="fa fa-check"></i>
-	                            </button>
+	                           
 								<a target="_blank" class="btn btn-sm btn-danger" href="' . base_url("Transaksi/Cetak_PO?no_po=" . $r->no_po . "") . '" title="Cetak" ><i class="fas fa-print"></i> </a>
 
 								<a target="_blank" class="btn btn-sm btn-success" href="' . base_url("Transaksi/Cetak_wa_po?no_po=" . $r->no_po . "") . '" title="Format WA" ><b><i class="fab fa-whatsapp"></i> </b></a> 
@@ -809,8 +821,18 @@ class Transaksi extends CI_Controller
 		$id = $_POST['id'];
 
 		if ($jenis == "trs_po") {
+
+			$load_po    = $this->db->query("SELECT *from trs_po a 
+			Join m_hub b ON a.id_hub=b.id_hub 
+			Join akses_db_hub c ON b.nm_hub=c.nm_hub
+			WHERE $field ='$id'")->row();
+
 			$result = $this->m_master->query("DELETE FROM $jenis WHERE  $field = '$id'");
 			$result = $this->m_master->query("DELETE FROM trs_po_detail WHERE  $field = '$id'");
+
+			// Hapus File Foto
+			unlink("assets/gambar_po/".$load_po->img_po);
+			
 		} else {
 
 			$result = $this->m_master->query("DELETE FROM $jenis WHERE  $field = '$id'");
