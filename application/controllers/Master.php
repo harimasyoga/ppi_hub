@@ -313,22 +313,9 @@ class Master extends CI_Controller
 				}
 				$row[] = $kualitas;
 
-				$idProduk = $r->id_produk; 
-				if (in_array($this->session->userdata('level'), ['Admin','User']))
-				{
-					$cekPO = $this->db->query("SELECT * FROM trs_po_detail WHERE id_produk='$idProduk'")->num_rows();
+				$btnEdit = '<button type="button" class="btn btn-warning btn-sm" onclick="tampil_edit('."'".$r->id_produk."'".','."'edit'".')"><i class="fas fa-pen"></i></button>';
 
-					$btnEdit = '<button type="button" class="btn btn-warning btn-sm" onclick="tampil_edit('."'".$r->id_produk."'".','."'edit'".')"><i class="fas fa-pen"></i></button>';
-
-					// $btnHapus = '<button type="button" class="btn btn-danger btn-sm" onclick="deleteData('."'".$r->id_produk."'".')"><i class="fas fa-times"></i></button>';
-				}else{
-					$cekPO       = '';
-					$btnEdit     = '';
-					$btnHapus    = '';
-				}
-
-				($cekPO == 0) ? $btnAksi = $btnEdit.' '.$btnHapus : $btnAksi = $btnEdit;
-				$row[] = '<div class="text-center">'.$btnAksi.'</div>';
+				$row[] = '<div class="text-center">'.$btnEdit.'</div>';
 				$data[] = $row;
 				$i++;
 			}

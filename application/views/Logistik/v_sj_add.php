@@ -26,7 +26,7 @@
 	<section class="content" style="padding-bottom:30px">
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-md-12">
+				<!-- <div class="col-md-12">
 					<div class="card card-secondary card-outline">
 						<div class="card-header" style="padding:12px">
 							<h3 class="card-title" style="font-weight:bold;font-size:18px">GUDANG</h3>
@@ -48,7 +48,7 @@
 							<div class="card-body-rk" style="padding:6px;overflow:auto;white-space:nowrap"></div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 				<div class="col-md-12">
 					<div class="card card-success card-outline">
 						<div class="card-header" style="padding:12px">
@@ -82,7 +82,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		$("#hidden-card-body-rk").load("<?php echo base_url('Logistik/destroyGudang') ?>")
-		loadPilihanSJ()
+		// loadPilihanSJ()
 		$('.select2').select2({
 			dropdownAutoWidth: true
 		})

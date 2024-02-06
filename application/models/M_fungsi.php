@@ -915,4 +915,33 @@ class M_fungsi extends CI_Model {
 		return $result;
 	}
 
+	function opsiHub()
+	{
+		if($this->session->userdata('username') == 'akb_213'){
+			$result = "AND po.id_hub='1'";
+		}else if($this->session->userdata('username') == 'bsm_159'){
+			$result = "AND po.id_hub='2'";
+		}else if($this->session->userdata('username') == 'ckj_963'){
+			$result = "AND po.id_hub='3'";
+		}else if($this->session->userdata('username') == 'gmb_987'){
+			$result = "AND po.id_hub='4'";
+		}else if($this->session->userdata('username') == 'jsk_654'){
+			$result = "AND po.id_hub='5'";
+		}else if($this->session->userdata('username') == 'ksm_575'){
+			$result = "AND po.id_hub='6'";
+		}else if($this->session->userdata('username') == 'mmm_353'){
+			$result = "AND po.id_hub='7'";
+		}else if($this->session->userdata('username') == 'pil_686'){
+			$result = "AND po.id_hub='8'";
+		}else if($this->session->userdata('username') == 'rsb_242'){
+			$result = "AND po.id_hub='9'";
+		}else if($this->session->userdata('username') == 'ssb_595'){
+			$result = "AND po.id_hub='10'";
+		}else{
+			$result = '';
+		}
+
+		return $result;
+	}
+
 }
