@@ -31,7 +31,7 @@
   <link rel="stylesheet" href="<?= base_url('assets/') ?>plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 
   <!-- overlayScrollbars -->
-  <link rel="stylesheet" href="<?= base_url('assets/') ?>dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="<?= base_url('assets/dist/css/') . $setting->nm_css ?>?v=1.0">
   <!-- Google Font: Source Sans Pro -->
   <link href="<?= base_url('assets/') ?>plugins/fontawesome-free/css/customFont.css" rel="stylesheet">
 

@@ -34,7 +34,7 @@ $setting = $this->db->query("SELECT * FROM m_setting")->row();
 	<link rel="stylesheet" href="<?= base_url('assets/') ?>plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 
 	<!-- overlayScrollbars -->
-	<link rel="stylesheet" href="<?= base_url('assets/') ?>dist/css/adminlte.min.css?v=1.0">
+	<link rel="stylesheet" href="<?= base_url('assets/dist/css/') . $setting->nm_css ?>?v=1.0">
 
 	<!-- overlayScrollbars -->
 	<link rel="stylesheet" href="<?= base_url('assets/') ?>dist/css/new.css?v=2">
