@@ -1,10 +1,10 @@
 
-.color-tabel {
+/* .color-tabel {
     background-image: linear-gradient(180deg,#22f2c9 10%,#02bf93 100%);
     text-align: center;
     justify-content:center;
     color: #000;
-}
+} */
 
 .input-border-none {
     border          : none;
@@ -29,7 +29,7 @@
     background: url(../../gambar/kupingan1.png) right center no-repeat;
     background-size: 30% 100%;
 }
-
+/* 
 .sidebar-footer{
     bottom:0;
     right:0;
@@ -39,10 +39,10 @@
     padding:5px 5px 5px 10px;
     position:absolute;
     width:250px;
-    /* background:#2A3F54; */
+    background:#2A3F54;
     background-image: linear-gradient(180deg,#07665a 10%,#086a5d 100%);
     z-index:999
-}
+} */
 
 .sidebar-footer a{
     /* padding:7px 0 3px; */
