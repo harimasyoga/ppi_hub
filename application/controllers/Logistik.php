@@ -1898,7 +1898,7 @@ class Logistik extends CI_Controller
 	{
 		$data = array(
 			'judul' => "Surat Jalan",
-			'setting' => $this->m_master->get_data("m_setting")->row(),
+			'setting' => $this->db->query("SELECT*FROM m_setting WHERE aktif='1'")->row(),
 		);
 		$this->load->view('header', $data);
 
