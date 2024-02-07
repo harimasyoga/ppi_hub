@@ -1,6 +1,6 @@
 <?php
-    $settingResult = $this->db->get_where('m_setting');
-    $settingData = $settingResult->row();
+    
+    $settingData = $this->db->query("SELECT*FROM m_setting WHERE aktif='1'")->row();
 
     $setting_site_logo = $settingData->logo;
 

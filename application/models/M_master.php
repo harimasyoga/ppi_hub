@@ -510,6 +510,7 @@ class M_master extends CI_Model{
         if ($upload['result'] == 'success') {
             $this->db->set("logo", $upload['file']['file_name'] );
         }
+		$this->db->where('aktif', '1');
         $result= $this->db->update($table,$data);
         
         return $result;

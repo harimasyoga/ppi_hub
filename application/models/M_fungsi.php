@@ -429,7 +429,7 @@ class M_fungsi extends CI_Model {
 		$unit     = $this->session->userdata('unit');
 		$avatar   = $this->session->userdata('avatar_cabang');
 
-		$profile  = $this->db->query("SELECT*FROM m_setting")->row();
+		$profile  = $this->db->query("SELECT*FROM m_setting WHERE aktif='1'")->row();
 		$nm_toko  = $profile->nm_toko;
 		$alamat   = $profile->alamat;
 		$alamat2  = $profile->alamat2;

@@ -1,5 +1,5 @@
 <?php 
-  $setting = $this->db->query("SELECT * FROM m_setting")->row();
+  $setting = $this->db->query("SELECT*FROM m_setting WHERE aktif='1'")->row();
  ?>
 
 <!DOCTYPE html>

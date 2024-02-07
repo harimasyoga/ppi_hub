@@ -11,14 +11,14 @@ class Master extends CI_Controller
 			redirect(base_url("Login"));
 		}
 		$this->load->model('m_master');
-		$data['setting'] = $this->m_master->get_data("m_setting")->row();
+		$data['setting'] = $this->db->query("SELECT*FROM m_setting WHERE aktif='1'")->row();
 	}
 
 	public function index()
 	{
 		$data = array(
 			'judul' => "Dashboard",
-			'setting' => $this->m_master->get_data("m_setting")->row(),
+			'setting' => $this->db->query("SELECT*FROM m_setting WHERE aktif='1'")->row(),
 		);
 		$this->load->view('header',$data );
 
@@ -177,7 +177,7 @@ class Master extends CI_Controller
 	function Sistem()
 	{
 		$data = array(
-			'data' => $this->m_master->get_data("m_setting")->row(),			
+			'data' => $this->db->query("SELECT*FROM m_setting WHERE aktif='1'")->row(),			
 			'judul' => "Master Sistem",
 		);
 
