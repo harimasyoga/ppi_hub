@@ -2548,7 +2548,7 @@
  [class*=sidebar-light-] .nav-flat .nav-item .nav-treeview .nav-treeview{border-color:rgba(0,0,0,.1)}
  [class*=sidebar-light-] .nav-flat .nav-item .nav-treeview>.nav-item>.nav-link,[class*=sidebar-light-] .nav-flat .nav-item .nav-treeview>.nav-item>.nav-link.active{border-color:rgba(0,0,0,.1)}
  /* ganti */
- [class*=sidebar-dark-]{background-color:#343a40;background-image: linear-gradient(180deg,#f8f9fc 10%,#000000 100%);} 
+ [class*=sidebar-dark-]{background-color:#343a40;background-image: linear-gradient(180deg,#f8f9fc 10%,#30363a 100%);} 
  [class*=sidebar-dark-] .user-panel a:hover{color:#fff}
  [class*=sidebar-dark-] .user-panel .status{background:rgba(255,255,255,.1);color:#c2c7d0}
  [class*=sidebar-dark-] .user-panel .status:active,[class*=sidebar-dark-] .user-panel .status:focus,[class*=sidebar-dark-] .user-panel .status:hover{background:rgba(247,247,247,.1);color:#fff}
@@ -2911,7 +2911,7 @@
  .navbar-teal{background-color:#20c997}
  .navbar-cyan{background-color:#17a2b8}
  /* ganti */
- .navbar-white{background-image: linear-gradient(180deg,#f8f9fc 10%,#8b8b8b 100%);}
+ .navbar-white{background-image: linear-gradient(180deg,#f8f9fc 10%,#82878b 100%);}
  .navbar-gray{background-color:#6c757d}
  .navbar-gray-dark{background-color:#343a40}
  .form-group.has-icon{position:relative}
@@ -4199,7 +4199,7 @@
  .login-logo a,.register-logo a{color:#fff}
  .login-page,.register-page{-ms-flex-align:center;align-items:center;
     /* ganti */
-  background-image: linear-gradient(180deg,#f8f9fc 10%,#000000 100%);display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column;height:90vh;-ms-flex-pack:center;justify-content:center}
+  background-image: linear-gradient(180deg,#f8f9fc 10%,#30363a 100%);display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column;height:90vh;-ms-flex-pack:center;justify-content:center}
  .login-box,.register-box{width:360px}
  @media (max-width:576px){.login-box,.register-box{margin-top:.5rem;width:90%}
 }
@@ -6384,7 +6384,7 @@
     width:250px;
     /* background:#2A3F54; */
     /* ganti */
-    background-image: linear-gradient(180deg,#1e1e1e 10%,#000000 100%);
+    background-image: linear-gradient(180deg,#484e51 10%,#30363a 100%);
     z-index:999
 }
 .color-tabel {
