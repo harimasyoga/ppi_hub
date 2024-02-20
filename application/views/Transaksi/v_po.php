@@ -826,7 +826,7 @@
 			success: function(data) {
 				if (data) {
 					// toastr.success('Berhasil Disimpan');
-					up_ft();
+					// up_ft();
 					swal.close();
 					swal({
 						title               : "Data",
@@ -1201,7 +1201,7 @@
 				},
 				success: function(data) {
 					// toastr.success('Data Berhasil Di Hapus');
-					d_pi(id,no);
+					// d_pi(id,no);
 					swal({
 						title               : "Data",
 						html                : "Data Berhasil Di Hapus",
