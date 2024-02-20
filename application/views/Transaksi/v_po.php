@@ -1694,7 +1694,7 @@
 							<tr style=list-style:none;> 
 								<td><b>Jenis Item </b>: ${val.jenis_produk}</td>
 								<td><b>Creasing : </b>${ val.creasing }-${ val.creasing2 }-${ val.creasing3 }</td> 
-								<td><b>Toleransi : </b>${ val.toleransi_kirim }</td> 
+								<td><b>Toleransi : </b>${ val.toleransi_kirim }%</td> 
 							</tr> 
 							<tr style=list-style:none;> 
 								<td><b>RM : <input type="text" class="input-border-none" name="rm[${id}]" id="rm${id}" readonly >
@@ -1710,7 +1710,8 @@
 							<tr style=list-style:none;>
 								<td><b>Tipe Box </b>: ${val.tipe_box}</td>
 								<td><b>Joint </b>: ${$join}</td>
-								<td><b>Toleransi </b>: ${val.toleransi_kirim} %</td>
+								<td><b>Bahan Baku : <input type="text" class="input-border-none" name="bhn_bk[${id}]" id="bhn_bk${id}" readonly >
+								</b></td>
 							</tr>
 							${lemparan_keterangan}
 							`;
@@ -2254,6 +2255,7 @@
 
 					rm       = Math.ceil(val.ukuran_sheet_p * qty / out / 1000);
 					ton      = Math.ceil(qty * val.berat_bersih);
+					bhn_bk   = Math.ceil(ton / 0.7);
 					
 
 					if(cek_rm==1)
@@ -2280,7 +2282,8 @@
 					
 
 					$('#rm'+id2).val(format_angka(rm));	
-					$('#ton'+id2).val(format_angka(ton));
+					$('#ton'+id2).val(format_angka(ton));					
+					$('#bhn_bk'+id2).val(format_angka(bhn_bk));
 					swal.close();	
 						
 				}
