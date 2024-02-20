@@ -443,7 +443,7 @@ class M_fungsi extends CI_Model {
 			 <thead>
 				  <tr>
 					   <td rowspan=\"5\" align=\"center\">
-							<img src=\"" . base_url() . "assets/gambar/ppi.png\"  width=\"80\" height=\"70\" />
+							<img src=\"" . base_url() . "assets/gambar/$profile->logo\"  width=\"80\" height=\"70\" />
 					   </td>
 					   <td colspan=\"20\">
 							<b>
@@ -563,7 +563,7 @@ class M_fungsi extends CI_Model {
 
 		// $this->mpdf->AddPage($orientasi,$uk);
 
-		$this->mpdf->SetFooter('Tercetak PPI - {DATE j-m-Y ( H:i:s )} |Halaman {PAGENO} / {nb}| ');
+		$this->mpdf->SetFooter('Tercetak {DATE j-m-Y ( H:i:s )} |Halaman {PAGENO} / {nb}| ');
 
 		$this->mpdf->setTitle($judul);
 

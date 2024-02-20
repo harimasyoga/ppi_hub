@@ -1040,6 +1040,11 @@ class Transaksi extends CI_Controller
                 <td width="85 %" > '. $this->m_fungsi->tanggal_format_indonesia($data->tgl_po) .'<td>
             </tr>
             <tr>
+                <td align="left">Kode PO</td>
+                <td> : </td>
+                <td> '. $data->kode_po .'<td>
+            </tr>
+            <tr>
                 <td align="left">Customer</td>
                 <td> : </td>
                 <td> '. $data->nm_pelanggan .'<td>
@@ -1056,17 +1061,12 @@ class Transaksi extends CI_Controller
                             <th width="10%" align="center">Creasing </th>
                             <th width="10%" align="center">Kualitas</th>							
 							<th width="10%" align="center">ETA</th>
-                            <th width="8%" align="center">Qty</th>';
-			if($this->session->userdata("level")!="PPIC"){
-
-							$html .='
-							<th width="10%" align="center">Harga <br> (Rp)</th>
-							<th width="10%" align="center">Total <br> (Rp)</th>
-							';
-			}
+                            <th width="8%" align="center">Qty</th>							
+							<th width="10%" align="center">Tonase</th>
+							<th width="10%" align="center">Kebutuhan Bahan</th>';
 					$html .='</tr>';
 			$no = 1;
-			$tot_qty = $tot_value = $tot_total = 0;
+			$tot_qty = $tot_tonase = $tot_bhn_bk = 0;
 			foreach ($query->result() as $r) {
 
                 $total = $r->price_inc*$r->qty;
@@ -1081,31 +1081,24 @@ class Transaksi extends CI_Controller
                                 <td align="center">' . $r->creasing . ' : ' . $r->creasing2 . ' : ' . $r->creasing3 . '</td>
                                 <td align="left">' . $r->kualitas . '</td>
                                 <td align="center" style="color:red">' . $this->m_fungsi->tanggal_ind($r->eta) . '</td>
-                                <td align="right">' . number_format($r->qty, 0, ",", ".") . '</td>								';
-				if($this->session->userdata("level")!="PPIC"){
-						$html .= '
-								<td align="right">' . number_format($r->price_inc, 0, ",", ".") . '</td>
-                                <td align="right">' . number_format($total, 0, ",", ".") . '</td>
-								';
-				}
+                                <td align="right">' . number_format($r->qty, 0, ",", ".") . '</td>
+                                <td align="right">' . number_format($r->ton, 0, ",", ".") . '</td>
+                                <td align="right">' . number_format($r->bhn_bk, 0, ",", ".") . '</td>
+								';						
 						$html .= '</tr>';
 
 				$no++;
 				$tot_qty += $r->qty;
-				$tot_price_inc += $r->price_inc;
-				$tot_total += $total;
+				$tot_tonase += $r->ton;
+				$tot_bhn_bk += $r->bhn_bk;
 			}
 			$html .='
                         <tr style="background-color: #cccccc">
                             <td align="center" colspan="8"><b>Total</b></td>
-                            <td align="right" ><b>' . number_format($tot_qty, 0, ",", ".") . '</b></td>						
-							';
-			if($this->session->userdata("level")!="PPIC"){
-					$html .= '
-							<td align="right" ><b>' . number_format($tot_price_inc, 0, ",", ".") . '</b></td>
-                            <td align="right" ><b>' . number_format($tot_total, 0, ",", ".") . '</b></td>';
-			}
-					$html .= '</tr>';
+                            <td align="right" ><b>' . number_format($tot_qty, 0, ",", ".") . '</b></td>	
+							<td align="right" ><b>' . number_format($tot_tonase, 0, ",", ".") . '</b></td>
+                            <td align="right" ><b>' . number_format($tot_bhn_bk, 0, ",", ".") . '</b></td>	
+							</tr>';
 			$html .= '
                  </table>';
 		} else {

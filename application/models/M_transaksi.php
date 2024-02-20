@@ -119,6 +119,7 @@ class M_transaksi extends CI_Model
 				'rm'              => str_replace('.', '', $params->rm[$key]),
 				'bb'              => $params->bb[$key],
 				'ton'             => str_replace('.', '', $params->ton[$key]),
+				'bhn_bk'          => str_replace('.', '', $params->bhn_bk[$key]),
 				'harga_kg'        => str_replace('.', '', $params->hrg_kg[$key]),
 				
 				'id_produk'       => $params->id_produk[$key],
