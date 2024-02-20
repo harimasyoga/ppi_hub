@@ -830,6 +830,11 @@ class Transaksi extends CI_Controller
 			$result = $this->m_master->query("DELETE FROM $jenis WHERE  $field = '$id'");
 			$result = $this->m_master->query("DELETE FROM trs_po_detail WHERE  $field = '$id'");
 
+			// hapus ppi
+			$db_ppi    = $this->load->database('db_ppi', TRUE);
+			$result    = $db_ppi->query("DELETE FROM $jenis WHERE  $field = '$id'");
+			$result    = $db_ppi->query("DELETE FROM trs_po_detail WHERE  $field = '$id'");
+
 			// Hapus File Foto
 			unlink("assets/gambar_po/".$load_po->img_po);
 			
