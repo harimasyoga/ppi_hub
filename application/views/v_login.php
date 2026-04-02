@@ -31,7 +31,7 @@
   <div class="login-logo">
     <!-- <img src="<?= base_url('assets/gambar/').$setting->logo ?>" width="50%"><br> -->
     <!-- <a href="#"><b><?= $setting->singkatan ?></b></a> -->
-    <a href="#"><b>SISTEM INFORMASI MANAJEMEN TERPADU </b></a>
+    <h2><a href="#"><b>SISTEM INFORMASI MANAJEMEN TERPADU </b></a></h2>
   </div>
   <!-- /.login-logo -->
   <div class="card">
