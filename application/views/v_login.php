@@ -7,7 +7,8 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title><?= $setting->nm_aplikasi ?></title>
+  <!-- <title><?= $setting->nm_aplikasi ?></title> -->
+  <title>SISTEM INFORMASI MANAJEMEN TERPADU</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- favicon -->
@@ -28,8 +29,9 @@
 <div class="login-box">
 
   <div class="login-logo">
-    <img src="<?= base_url('assets/gambar/').$setting->logo ?>" width="50%"><br>
-    <a href="#"><b><?= $setting->singkatan ?></b></a>
+    <!-- <img src="<?= base_url('assets/gambar/').$setting->logo ?>" width="50%"><br> -->
+    <!-- <a href="#"><b><?= $setting->singkatan ?></b></a> -->
+    <a href="#"><b>SISTEM INFORMASI MANAJEMEN TERPADU </b></a>
   </div>
   <!-- /.login-logo -->
   <div class="card">
