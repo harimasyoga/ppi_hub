@@ -1,28 +1,8 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 
-#[\AllowDynamicProperties] 
-class Login extends CI_Controller{
-
-	public $log;
-	public $benchmark;
-	public $hooks;
-	public $config;
-	public $utf8;
-	public $uri;
-	public $exceptions;
-	public $router;
-	public $output;
-	public $security;
-	public $input;
-	public $lang;
-	public $load;
-	public $db;
-	public $session;
-	public $form_validation;
-	public $cart;
-	public $m_fungsi;
-	public $m_login;
-	public $m_master;
+#[\AllowDynamicProperties]
+class Login extends CI_Controller {
 
 	function __construct(){
 		parent::__construct();		
