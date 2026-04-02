@@ -1,6 +1,7 @@
 <?php
 
-class login extends CI_Controller{
+#[\AllowDynamicProperties]
+class Login extends CI_Controller{
 
 	function __construct(){
 		parent::__construct();		
@@ -24,7 +25,7 @@ class login extends CI_Controller{
 		// $p = mysql_escape_string($password_);
 		$password = base64_encode($password_);
 		$cek = $this->m_login->cek_login($username,$password);
-		if(count($cek->result()) > 0){
+		if($cek->num_rows() > 0){
 			
 			foreach ($cek->result() as $dt) {
 				$data_session['status'] = "login";
@@ -64,8 +65,9 @@ class login extends CI_Controller{
 		$password_ = $this->input->post('password');
 		$password = base64_encode($password_);
 		$cek = $this->m_login->cek_login_member($username,$password);
-		if(count($cek->result()) > 0){
-			echo "string"; exit();
+		if($cek->num_rows() > 0){
+			// echo "string"; 
+			exit();
 			foreach ($cek->result() as $dt) {
 				$data_session['status'] = "login";
 				$data_session['username'] = $dt->username;
