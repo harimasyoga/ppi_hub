@@ -1,6 +1,6 @@
 <?php
 
-#[\AllowDynamicProperties]
+#[\AllowDynamicProperties] 
 class Login extends CI_Controller{
 
 	function __construct(){
